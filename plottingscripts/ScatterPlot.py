@@ -123,8 +123,8 @@ def main():
         plot1 = CreatePlot()
         plot1.plot_layers = [sctr1]
         plot1.add_title(label=f"WND Day {day} {model} {satelites[j]} {season[k]}")
-        plot1.add_xlabel(xlabel='observation')
-        plot1.add_ylabel(ylabel='model')
+        plot1.add_xlabel(xlabel=f"observation ({satelites[j]})")
+        plot1.add_ylabel(ylabel=f"model ({model})")
         plot1.add_legend()
         plot1.set_xlim(0,35) 
         plot1.set_ylim(0,35) 
