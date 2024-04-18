@@ -12,15 +12,26 @@ import datetime as dt
 from dateutil.relativedelta import relativedelta
 import os
 
+'''
+ScatterPlot.py creates scatter density plots (model vs obs) by day for a model input for HR experiments and obs  
+'''
 
 def main():
 
+  ap = argparse.ArgumentParser()
+  ap.add_argument('-m', '--model', help="String Identifier of Model 'multi1', 'GFSv16', 'HR1', 'HR2', 'HR3a', 'HR3b'", required=True)
+
+  model = MyArgs.model
+
   rootdir = os.path.join('/work2/noaa/marine/jmeixner/processsatdata', 'jobinterp')
 
-  season=['winter', 'summer', 'hurricane']
   satelites=['JASON3', 'CRYOSAT2', 'SARAL', 'SENTINEL3A'] #JASON3,JASON2,CRYOSAT2,JASON1,HY2,SARAL,SENTINEL3A,ENVISAT,ERS1,ERS2,GEOSAT,GFO,TOPEX,SENTINEL3B,CFOSAT
-  #model=['multi1', 'GFSv16', 'HR1', 'HR2', 'HR3']
-  model='HR1'
+
+  if model == "GFSv16": 
+    season=['summer', 'hurricane']
+  else: 
+    season=['winter', 'summer', 'hurricane']
+
 
   for k in range(len(season)):
     if season[k] == "winter":
@@ -43,7 +54,6 @@ def main():
     dates1 = []
     while nowdate <= enddate:
        dates1.append(nowdate.strftime('%Y%m%d%H'))
-       #nowdate = (nowdate + dt.timedelta(days=datestride)).strftime('%Y%m%d') 
        nowdate = nowdate + dt.timedelta(days=datestride)
     print(dates1)
 
@@ -53,7 +63,12 @@ def main():
       model_hs = []; model_wnd = []
       for i in range(len(dates1)):
          OUTDIR=f"/work2/noaa/marine/jmeixner/processsatdata/outinterp/{model}" 
-         OUTPUT_FILE=f"{model}_global.0p25_{season[k]}_{dates1[i]}_{satelites[j]}.nc"
+         if model == "multi1": 
+            OUTPUT_FILE=f"{model}_global.0p50_{dates1[i]}_{satelites[j]}.nc"
+         elif model == "GFSv16":
+            OUTPUT_FILE=f"{model}_global.0p25_{dates1[i]}_{satelites[j]}.nc"
+         else: 
+            OUTPUT_FILE=f"{model}_global.0p25_{season[k]}_{dates1[i]}_{satelites[j]}.nc"
          datapath = OUTDIR + "/" + OUTPUT_FILE
          print(datapath)
          datanc  = nc.Dataset(datapath)
@@ -62,7 +77,6 @@ def main():
          #lats = np.append(lats, np.array(datanc.variables['latitude'][:]))    
          #lons = np.append(lons, np.array(datanc.variables['longitude'][:])) 
          fhrs = np.append(fhrs, np.array(datanc.variables['fcst_hr'][:])) 
-  
 
          obs_hs = np.append(obs_hs,np.array(datanc.variables['obs_hs'][:]))
          obs_wnd = np.append(obs_wnd, np.array(datanc.variables['obs_wnd'][:]))
@@ -91,11 +105,11 @@ def main():
         plot1 = CreatePlot()
         plot1.plot_layers = [sctr1]
         plot1.add_title(label=f"HS Day {day} {model} {satelites[j]} {season[k]}")
-        plot1.add_xlabel(xlabel='observation')
-        plot1.add_ylabel(ylabel='model')
+        plot1.add_xlabel(xlabel=f"observation ({satelites[j]})")
+        plot1.add_ylabel(ylabel=f"model ({model})")
         plot1.add_legend()
-        plot1.set_xlim(0,15) #np.nanmax(obs_hs))
-        plot1.set_ylim(0,15) #np.nanmax(obs_hs))
+        plot1.set_xlim(0,15) 
+        plot1.set_ylim(0,15) 
         fig = CreateFigure()
         fig.plot_list = [plot1]
         fig.create_figure()
@@ -110,8 +124,8 @@ def main():
         plot1.add_xlabel(xlabel='observation')
         plot1.add_ylabel(ylabel='model')
         plot1.add_legend()
-        plot1.set_xlim(0,35) #np.nanmax(obs_hs))
-        plot1.set_ylim(0,35) #np.nanmax(obs_hs))
+        plot1.set_xlim(0,35) 
+        plot1.set_ylim(0,35) 
         fig = CreateFigure()
         fig.plot_list = [plot1]
         fig.create_figure()
