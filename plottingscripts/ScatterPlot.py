@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import netCDF4 as nc
+import argparse
 
 from emcpy.plots import CreatePlot, CreateFigure
 from emcpy.plots.map_tools import Domain, MapProjection
@@ -20,6 +21,7 @@ def main():
 
   ap = argparse.ArgumentParser()
   ap.add_argument('-m', '--model', help="String Identifier of Model 'multi1', 'GFSv16', 'HR1', 'HR2', 'HR3a', 'HR3b'", required=True)
+  MyArgs = ap.parse_args()
 
   model = MyArgs.model
 
@@ -79,7 +81,7 @@ def main():
          fhrs = np.append(fhrs, np.array(datanc.variables['fcst_hr'][:])) 
 
          obs_hs = np.append(obs_hs,np.array(datanc.variables['obs_hs'][:]))
-         obs_wnd = np.append(obs_wnd, np.array(datanc.variables['obs_wnd'][:]))
+         obs_wnd = np.append(obs_wnd, np.array(datanc.variables['obs_wnd_cal'][:]))
          #obscal_wnd = np.append(obscal_wnd, np.array(datanc.variables['obs_wnd_cal'][:]))
          #obscal_hs = np.append(obscal_hs, np.array(datanc.variables['model_hs_cal'][:]))
 
