@@ -95,7 +95,7 @@ def main():
         f1 = day*24
         print(f0) 
         print(f1) 
-        indx=np.where(( fhrs < f1 ) & ( fhrs > f0 )) 
+        indx=np.where(( fhrs < f1 ) & ( fhrs > f0 ) & (~np.isnan(model_hs)) 
         obs_hs_day = obs_hs[indx]
         obs_wnd_day = obs_wnd[indx]
         model_hs_day = model_hs[indx]
