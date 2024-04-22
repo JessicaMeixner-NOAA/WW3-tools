@@ -95,7 +95,7 @@ def main():
         f1 = day*24
         print(f0) 
         print(f1) 
-        indx=np.where(( fhrs < f1 ) & ( fhrs > f0 ) & (~np.isnan(model_hs)) 
+        indx=np.where(( fhrs < f1 ) & ( fhrs > f0 ) & (~np.isnan(model_hs))) 
         obs_hs_day = obs_hs[indx]
         obs_wnd_day = obs_wnd[indx]
         model_hs_day = model_hs[indx]
@@ -104,6 +104,8 @@ def main():
         # Create Scatter object
         sctr1 = Scatter(obs_hs_day, model_hs_day)
         sctr1.density_scatter()
+        sctr1.do_linear_regression = True
+        sctr1.add_linear_regression()
         plot1 = CreatePlot()
         plot1.plot_layers = [sctr1]
         plot1.add_title(label=f"HS Day {day} {model} {satelites[j]} {season[k]}")
@@ -120,6 +122,8 @@ def main():
 
         sctr1 = Scatter(obs_wnd_day, model_wnd_day)
         sctr1.density_scatter()
+        sctr1.do_linear_regression = True
+        sctr1.add_linear_regression()
         plot1 = CreatePlot()
         plot1.plot_layers = [sctr1]
         plot1.add_title(label=f"WND Day {day} {model} {satelites[j]} {season[k]}")
