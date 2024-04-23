@@ -35,6 +35,9 @@ def main():
     season=['winter', 'summer', 'hurricane']
 
 
+  season=['summer']
+  satelites=['JASON3']
+
   for k in range(len(season)):
     if season[k] == "winter":
        startdate = dt.datetime(2019,12,3)
@@ -46,6 +49,11 @@ def main():
        enddate = dt.datetime(2020,8,30)
        datestride = 3
        endday = 16
+
+       enddate = dt.datetime(2020,6,8)
+       endday = 3
+
+
     elif season[k] == "hurricane":
        startdate = dt.datetime(2020,7,20)
        enddate = dt.datetime(2020,11,20)
@@ -67,9 +75,9 @@ def main():
          #list of grids for each model.  First should be "global" or the base, followed by high resolution inserts in the order 
          #of lower(global) to higher(regional) resolution. 
          if model == "multi1":
-            grids=['global.0p50', 'ak_10m', 'at_10m', 'ep_10m', 'wc_10m', 'ak_4m', 'at_4m', 'wc_4m']
+            grids=['global.0p50', 'alaska.0p16', 'atlocn.0p16', 'epacif.0p16', 'wcoast.0p16', 'alaska.0p06', 'atlocn.0p06', 'wcoast.0p06']
          elif model == "GFSv16":
-            grids=['global.0p25',]
+            grids=['global.0p25', 'global.0p16']
          else:
             grids=['global.0p25']
 
@@ -77,15 +85,15 @@ def main():
 
             OUTDIR=f"/work2/noaa/marine/jmeixner/processsatdata/outinterp/{model}" 
             if model == "multi1": 
-               OUTPUT_FILE=f"{model}_{grid[i]}_{dates1[i]}_{satelites[j]}.nc"
+               OUTPUT_FILE=f"{model}_{grids[g]}_{dates1[i]}_{satelites[j]}.nc"
             elif model == "GFSv16":
-               OUTPUT_FILE=f"{model}_{grid[i]}_{dates1[i]}_{satelites[j]}.nc"
+               OUTPUT_FILE=f"{model}_{grids[g]}_{dates1[i]}_{satelites[j]}.nc"
             else: 
-               OUTPUT_FILE=f"{model}_{grid[i]}_{season[k]}_{dates1[i]}_{satelites[j]}.nc"
+               OUTPUT_FILE=f"{model}_{grids[g]}_{season[k]}_{dates1[i]}_{satelites[j]}.nc"
 
             datapath = OUTDIR + "/" + OUTPUT_FILE
             datanc  = nc.Dataset(datapath)
-
+            print(datapath) 
             #time = np.append(time, np.array(datanc.variables['time'][:]))
             #lats = np.append(lats, np.array(datanc.variables['latitude'][:]))    
             #lons = np.append(lons, np.array(datanc.variables['longitude'][:])) 
@@ -114,15 +122,17 @@ def main():
                indx=np.where(~np.isnan(model_hs))
                #Check that obs values are the same for sanity check and if so, 
                #replace model values with high res inserts 
-               if (obs_hs_tmphigh[indx] == obs_hs_tmpbase[indx]): 
+               if ((obs_hs_tmphigh == obs_hs_tmpbase).all()): 
+                 print('replaced grid..')
+                 print(OUTPUT_FILE)
+                 print(indx)
                  model_hs_tmpbase[indx] = model_hs_tmphigh[indx]
                  model_wnd_tmpbase[indx] = model_wnd_tmphigh[indx]
-
 
             time = np.append(time, time_tmpbase) 
             lats = np.append(lats, lats_tmpbase)
             lons = np.append(lons, lons_tmpbase)
-            fhrs = np.append(fhrs, fhrs_tmpbase
+            fhrs = np.append(fhrs, fhrs_tmpbase)
             obs_hs = np.append(obs_hs, obs_hs_tmpbase)
             obs_wnd = np.append(obs_wnd, obs_wnd_tmpbase)
 
