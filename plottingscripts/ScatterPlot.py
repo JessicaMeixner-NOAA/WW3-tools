@@ -57,7 +57,6 @@ def main():
     while nowdate <= enddate:
        dates1.append(nowdate.strftime('%Y%m%d%H'))
        nowdate = nowdate + dt.timedelta(days=datestride)
-    print(dates1)
 
     for j in range(len(satelites)): 
       time = []; lats = []; lons = []; fhrs = []
@@ -72,7 +71,6 @@ def main():
          else: 
             OUTPUT_FILE=f"{model}_global.0p25_{season[k]}_{dates1[i]}_{satelites[j]}.nc"
          datapath = OUTDIR + "/" + OUTPUT_FILE
-         print(datapath)
          datanc  = nc.Dataset(datapath)
 
          #time = np.append(time, np.array(datanc.variables['time'][:]) 
@@ -93,8 +91,6 @@ def main():
       while day <= endday:
         f0 = day0*24 
         f1 = day*24
-        print(f0) 
-        print(f1) 
         indx=np.where(( fhrs < f1 ) & ( fhrs > f0 ) & (~np.isnan(model_hs))) 
         obs_hs_day = obs_hs[indx]
         obs_wnd_day = obs_wnd[indx]
