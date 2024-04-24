@@ -84,6 +84,7 @@ def main():
          for g in range(len(grids)): 
 
             OUTDIR=f"/work2/noaa/marine/jmeixner/processsatdata/outinterp/{model}" 
+            OUTDIR=f"/scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/outinterp/{model}"
             if model == "multi1": 
                OUTPUT_FILE=f"{model}_{grids[g]}_{dates1[i]}_{satelites[j]}.nc"
             elif model == "GFSv16":
@@ -119,15 +120,17 @@ def main():
                model_hs_tmphigh = np.array(datanc.variables['model_hs'][:])
                model_wnd_tmphigh = np.array(datanc.variables['model_wnd'][:])
                #determine where you have valid model values: 
-               indx=np.where(~np.isnan(model_hs))
+               indx=np.where(~np.isnan(model_hs_tmphigh))
                #Check that obs values are the same for sanity check and if so, 
                #replace model values with high res inserts 
                if ((obs_hs_tmphigh == obs_hs_tmpbase).all()): 
                  print('replaced grid..')
                  print(OUTPUT_FILE)
                  print(indx)
-                 model_hs_tmpbase[indx] = model_hs_tmphigh[indx]
-                 model_wnd_tmpbase[indx] = model_wnd_tmphigh[indx]
+                 np.where(~np.isnan(model_hs_tmphigh), model_hs_tmpbase, model_hs_tmphigh)
+                 np.where(~np.isnan(model_hs_tmphigh), model_wnd_tmpbase, model_wnd_tmphigh)
+                 #model_hs_tmpbase[indx] = model_hs_tmphigh[indx]
+                 #model_wnd_tmpbase[indx] = model_wnd_tmphigh[indx]
 
             time = np.append(time, time_tmpbase) 
             lats = np.append(lats, lats_tmpbase)
