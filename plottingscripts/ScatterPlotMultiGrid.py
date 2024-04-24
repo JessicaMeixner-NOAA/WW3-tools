@@ -49,11 +49,6 @@ def main():
        enddate = dt.datetime(2020,8,30)
        datestride = 3
        endday = 16
-
-       enddate = dt.datetime(2020,6,8)
-       endday = 3
-
-
     elif season[k] == "hurricane":
        startdate = dt.datetime(2020,7,20)
        enddate = dt.datetime(2020,11,20)
@@ -95,11 +90,6 @@ def main():
 
             datapath = OUTDIR + "/" + OUTPUT_FILE
             datanc  = nc.Dataset(datapath)
-            print(datapath) 
-            #time = np.append(time, np.array(datanc.variables['time'][:]))
-            #lats = np.append(lats, np.array(datanc.variables['latitude'][:]))    
-            #lons = np.append(lons, np.array(datanc.variables['longitude'][:])) 
-            #fhrs = np.append(fhrs, np.array(datanc.variables['fcst_hr'][:])) 
             if g == 0:
                #this is the global/base grid:  
                time_tmpbase = np.array(datanc.variables['time'][:])
@@ -120,25 +110,11 @@ def main():
                obs_wnd_tmphigh = np.array(datanc.variables['obs_wnd_cal'][:])
                model_hs_tmphigh = np.array(datanc.variables['model_hs'][:])
                model_wnd_tmphigh = np.array(datanc.variables['model_wnd'][:])
-               #determine where you have valid model values: 
-               indx=np.where(~np.isnan(model_hs_tmphigh))
                #Check that obs values are the same for sanity check and if so, 
-               #replace model values with high res inserts 
+               #replace model values with high res inserts where HS is not nan 
                if ((obs_hs_tmphigh == obs_hs_tmpbase).all()): 
-                 print('replaced grid..')
-                 print(OUTPUT_FILE)
-                 print(indx)
-                 print('before')
-                 print(len(model_hs_tmpbase))
-                 print(len(model_hs_tmphigh))
                  np.where(~np.isnan(model_hs_tmphigh), model_hs_tmpbase, model_hs_tmphigh)
                  np.where(~np.isnan(model_hs_tmphigh), model_wnd_tmpbase, model_wnd_tmphigh)
-                 print('after')
-                 print(len(model_hs_tmpbase))
-                 print(len(model_hs_tmphigh))
-
-                 #model_hs_tmpbase[indx] = model_hs_tmphigh[indx]
-                 #model_wnd_tmpbase[indx] = model_wnd_tmphigh[indx]
 
             time = np.append(time, time_tmpbase) 
             lats = np.append(lats, lats_tmpbase)
@@ -149,21 +125,10 @@ def main():
 
             model_hs = np.append(model_hs, model_hs_tmpbase)
             model_wnd = np.append(model_wnd, model_wnd_tmpbase) 
-            print('length of tmpbase arrays')
-            print(len(time_tmpbase))
-            print(len(model_hs_tmpbase))
-            print(len(fhrs_tmpbase))
-            print('lenght of appeneded arrays, current status') 
-            print(len(time))
-            print(len(model_hs))
-            print(len(fhrs))
+
 
       day0=0   
       day=1 
-      print('lenght of appended arrays')
-      print(len(time))
-      print(len(model_hs))
-      print(len(fhrs))
 
       while day <= endday:
         f0 = day0*24 
