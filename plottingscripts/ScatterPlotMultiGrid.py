@@ -68,8 +68,9 @@ def main():
 
 
     for j in range(len(satelites)): 
-      time = []; lats = []; lons = []; fhrs = []
-      obs_hs = []; obs_wnd = []; obscal_hs =[]; obscal_wnd = []
+      time = []; lats = []; lons = []
+      fhrs = []
+      obs_hs = []; obs_wnd = []
       model_hs = []; model_wnd = []
       for i in range(len(dates1)):
          #list of grids for each model.  First should be "global" or the base, followed by high resolution inserts in the order 
@@ -98,7 +99,7 @@ def main():
             #time = np.append(time, np.array(datanc.variables['time'][:]))
             #lats = np.append(lats, np.array(datanc.variables['latitude'][:]))    
             #lons = np.append(lons, np.array(datanc.variables['longitude'][:])) 
-            fhrs = np.append(fhrs, np.array(datanc.variables['fcst_hr'][:])) 
+            #fhrs = np.append(fhrs, np.array(datanc.variables['fcst_hr'][:])) 
             if g == 0:
                #this is the global/base grid:  
                time_tmpbase = np.array(datanc.variables['time'][:])
@@ -127,8 +128,15 @@ def main():
                  print('replaced grid..')
                  print(OUTPUT_FILE)
                  print(indx)
+                 print('before')
+                 print(len(model_hs_tmpbase))
+                 print(len(model_hs_tmphigh))
                  np.where(~np.isnan(model_hs_tmphigh), model_hs_tmpbase, model_hs_tmphigh)
                  np.where(~np.isnan(model_hs_tmphigh), model_wnd_tmpbase, model_wnd_tmphigh)
+                 print('after')
+                 print(len(model_hs_tmpbase))
+                 print(len(model_hs_tmphigh))
+
                  #model_hs_tmpbase[indx] = model_hs_tmphigh[indx]
                  #model_wnd_tmpbase[indx] = model_wnd_tmphigh[indx]
 
@@ -141,9 +149,22 @@ def main():
 
             model_hs = np.append(model_hs, model_hs_tmpbase)
             model_wnd = np.append(model_wnd, model_wnd_tmpbase) 
+            print('length of tmpbase arrays')
+            print(len(time_tmpbase))
+            print(len(model_hs_tmpbase))
+            print(len(fhrs_tmpbase))
+            print('lenght of appeneded arrays, current status') 
+            print(len(time))
+            print(len(model_hs))
+            print(len(fhrs))
 
       day0=0   
       day=1 
+      print('lenght of appended arrays')
+      print(len(time))
+      print(len(model_hs))
+      print(len(fhrs))
+
       while day <= endday:
         f0 = day0*24 
         f1 = day*24
