@@ -25,8 +25,6 @@ def main():
 
   model = MyArgs.model
 
-  rootdir = os.path.join('/work2/noaa/marine/jmeixner/processsatdata', 'jobinterp')
-
   satelites=['JASON3', 'CRYOSAT2', 'SARAL', 'SENTINEL3A'] #JASON3,JASON2,CRYOSAT2,JASON1,HY2,SARAL,SENTINEL3A,ENVISAT,ERS1,ERS2,GEOSAT,GFO,TOPEX,SENTINEL3B,CFOSAT
 
   if model == "GFSv16": 
@@ -80,7 +78,7 @@ def main():
          for g in range(len(grids)): 
 
             OUTDIR=f"/work2/noaa/marine/jmeixner/processsatdata/outinterp/{model}" 
-            OUTDIR=f"/scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/outinterp/{model}"
+            #OUTDIR=f"/scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/outinterp/{model}"
             if model == "multi1": 
                OUTPUT_FILE=f"{model}_{grids[g]}_{dates1[i]}_{satelites[j]}.nc"
             elif model == "GFSv16":
