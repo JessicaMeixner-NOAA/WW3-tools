@@ -32,7 +32,6 @@ def main():
   else: 
     season=['winter', 'summer', 'hurricane']
 
-
   for k in range(len(season)):
     if season[k] == "winter":
        startdate = dt.datetime(2019,12,3)
@@ -56,36 +55,74 @@ def main():
        dates1.append(nowdate.strftime('%Y%m%d%H'))
        nowdate = nowdate + dt.timedelta(days=datestride)
 
-    time = []; lats = []; lons = []; fhrs = []
-    obs_hs = []; obs_wnd = []; obscal_hs =[]; obscal_wnd = []
+    time = []; lats = []; lons = []
+    fhrs = []
+    obs_hs = []; obs_wnd = []
     model_hs = []; model_wnd = []
-    for j in range(len(satelites)):
-      for i in range(len(dates1)):
-         OUTDIR=f"/work2/noaa/marine/jmeixner/processsatdata/outinterp/{model}" 
-         if model == "multi1": 
-            OUTPUT_FILE=f"{model}_global.0p50_{dates1[i]}_{satelites[j]}.nc"
+    for i in range(len(dates1)):
+      for j in range(len(satelites)):
+         #list of grids for each model.  First should be "global" or the base, followed by high resolution inserts in the order 
+         #of lower(global) to higher(regional) resolution. 
+         if model == "multi1":
+            grids=['global.0p50', 'alaska.0p16', 'atlocn.0p16', 'epacif.0p16', 'wcoast.0p16', 'alaska.0p06', 'atlocn.0p06', 'wcoast.0p06']
          elif model == "GFSv16":
-            OUTPUT_FILE=f"{model}_global.0p25_{dates1[i]}_{satelites[j]}.nc"
-         else: 
-            OUTPUT_FILE=f"{model}_global.0p25_{season[k]}_{dates1[i]}_{satelites[j]}.nc"
-         datapath = OUTDIR + "/" + OUTPUT_FILE
-         datanc  = nc.Dataset(datapath)
+            grids=['global.0p25', 'global.0p16']
+         else:
+            grids=['global.0p25']
 
-         #time = np.append(time, np.array(datanc.variables['time'][:]) 
-         #lats = np.append(lats, np.array(datanc.variables['latitude'][:]))    
-         #lons = np.append(lons, np.array(datanc.variables['longitude'][:])) 
-         fhrs = np.append(fhrs, np.array(datanc.variables['fcst_hr'][:])) 
+         for g in range(len(grids)): 
 
-         obs_hs = np.append(obs_hs,np.array(datanc.variables['obs_hs'][:]))
-         obs_wnd = np.append(obs_wnd, np.array(datanc.variables['obs_wnd_cal'][:]))
-         #obscal_wnd = np.append(obscal_wnd, np.array(datanc.variables['obs_wnd_cal'][:]))
-         #obscal_hs = np.append(obscal_hs, np.array(datanc.variables['model_hs_cal'][:]))
+            OUTDIR=f"/work2/noaa/marine/jmeixner/processsatdata/outinterp/{model}" 
+            #OUTDIR=f"/scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/outinterp/{model}"
+            if model == "multi1": 
+               OUTPUT_FILE=f"{model}_{grids[g]}_{dates1[i]}_{satelites[j]}.nc"
+            elif model == "GFSv16":
+               OUTPUT_FILE=f"{model}_{grids[g]}_{dates1[i]}_{satelites[j]}.nc"
+            else: 
+               OUTPUT_FILE=f"{model}_{grids[g]}_{season[k]}_{dates1[i]}_{satelites[j]}.nc"
 
-         model_hs = np.append(model_hs, np.array(datanc.variables['model_hs'][:]))
-         model_wnd = np.append(model_wnd, np.array(datanc.variables['model_wnd'][:]))
+            datapath = OUTDIR + "/" + OUTPUT_FILE
+            datanc  = nc.Dataset(datapath)
+            if g == 0:
+               #this is the global/base grid:  
+               time_tmpbase = np.array(datanc.variables['time'][:])
+               fhrs_tmpbase = np.array(datanc.variables['fcst_hr'][:])
+               lats_tmpbase = np.array(datanc.variables['latitude'][:])
+               lons_tmpbase = np.array(datanc.variables['longitude'][:])
+               obs_hs_tmpbase = np.array(datanc.variables['obs_hs'][:])
+               obs_wnd_tmpbase = np.array(datanc.variables['obs_wnd_cal'][:])
+               model_hs_tmpbase = np.array(datanc.variables['model_hs'][:])
+               model_wnd_tmpbase = np.array(datanc.variables['model_wnd'][:]) 
+            else: 
+               #this is s a higher resolution sub-grid 
+               time_tmphigh = np.array(datanc.variables['time'][:])
+               fhrs_tmphigh = np.array(datanc.variables['fcst_hr'][:])
+               lats_tmphigh = np.array(datanc.variables['latitude'][:])
+               lons_tmphigh = np.array(datanc.variables['longitude'][:])
+               obs_hs_tmphigh = np.array(datanc.variables['obs_hs'][:])
+               obs_wnd_tmphigh = np.array(datanc.variables['obs_wnd_cal'][:])
+               model_hs_tmphigh = np.array(datanc.variables['model_hs'][:])
+               model_wnd_tmphigh = np.array(datanc.variables['model_wnd'][:])
+               #Check that obs values are the same for sanity check and if so, 
+               #replace model values with high res inserts where HS is not nan 
+               if ((obs_hs_tmphigh == obs_hs_tmpbase).all()): 
+                 np.where(~np.isnan(model_hs_tmphigh), model_hs_tmpbase, model_hs_tmphigh)
+                 np.where(~np.isnan(model_hs_tmphigh), model_wnd_tmpbase, model_wnd_tmphigh)
+
+            time = np.append(time, time_tmpbase) 
+            lats = np.append(lats, lats_tmpbase)
+            lons = np.append(lons, lons_tmpbase)
+            fhrs = np.append(fhrs, fhrs_tmpbase)
+            obs_hs = np.append(obs_hs, obs_hs_tmpbase)
+            obs_wnd = np.append(obs_wnd, obs_wnd_tmpbase)
+
+            model_hs = np.append(model_hs, model_hs_tmpbase)
+            model_wnd = np.append(model_wnd, model_wnd_tmpbase) 
+
 
     day0=0   
     day=1 
+
     while day <= endday:
       f0 = day0*24 
       f1 = day*24
@@ -131,7 +168,7 @@ def main():
       fig.create_figure()
       fig.save_figure(f"scatter_WND_{model}_satelites_{season[k]}_day{day}.png")
       fig.close_figure()
-
+   
       day0 = day
       day = day + 1
 
