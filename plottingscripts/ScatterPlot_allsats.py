@@ -25,8 +25,6 @@ def main():
 
   model = MyArgs.model
 
-  rootdir = os.path.join('/work2/noaa/marine/jmeixner/processsatdata', 'jobinterp')
-
   satelites=['JASON3', 'CRYOSAT2', 'SARAL', 'SENTINEL3A'] #JASON3,JASON2,CRYOSAT2,JASON1,HY2,SARAL,SENTINEL3A,ENVISAT,ERS1,ERS2,GEOSAT,GFO,TOPEX,SENTINEL3B,CFOSAT
 
   if model == "GFSv16": 

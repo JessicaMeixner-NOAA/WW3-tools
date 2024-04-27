@@ -32,10 +32,6 @@ def main():
   else: 
     season=['winter', 'summer', 'hurricane']
 
-
-  season=['summer']
-  satelites=['JASON3']
-
   for k in range(len(season)):
     if season[k] == "winter":
        startdate = dt.datetime(2019,12,3)
