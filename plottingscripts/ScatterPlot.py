@@ -49,12 +49,16 @@ def main():
        datestride = 1
        endday = 7
 
+    #if multi-1 end at day 7
+    if model == "multi1":
+      endday = 7
+
+
     nowdate = startdate
     dates1 = []
     while nowdate <= enddate:
        dates1.append(nowdate.strftime('%Y%m%d%H'))
        nowdate = nowdate + dt.timedelta(days=datestride)
-
 
     for j in range(len(satelites)): 
       time = []; lats = []; lons = []
