@@ -8,7 +8,7 @@
         "HR3b": "/scratch2/NCEPDEV/marine/Ghazal.Mohammadpour/transfer/validation/WW3-tools/ww3tools/ORION/WW3-tools/ww3tools/output/HR3b/hurricane"
     },
     "filenames": [
-        "filtered_2h_to_24h.nc",
+        "filtered_3h_to_24h.nc",
         "filtered_24h_to_48h.nc",
         "filtered_48h_to_72h.nc",
         "filtered_72h_to_96h.nc",

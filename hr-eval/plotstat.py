@@ -41,7 +41,9 @@ def plot_sorted_metric(metric, use_common_days_only=False):
         'HR3a': 'deeppink',
         'HR3b': 'purple'
     }
-    for model in sorted_data['Model'].unique():
+    # Define the legend order
+    legend_order = ['MULTI1', 'GFSv16', 'HR1', 'HR2', 'HR3a', 'HR3b']
+    for model in legend_order:
         model_data = sorted_data[sorted_data['Model'] == model]
         if use_common_days_only:
             model_data = model_data[model_data['Day'] <= min_common_day]
@@ -52,7 +54,7 @@ def plot_sorted_metric(metric, use_common_days_only=False):
 
     # Adjust the x-axis for day display, starting from Day 1
     day_conversion_factor = 24
-    tick_spacing = 1  # Days between labels
+    tick_spacing = 5  # Days between labels
     if use_common_days_only:
         max_day = int(min_common_day / day_conversion_factor) + 1
     else:
@@ -68,10 +70,9 @@ def plot_sorted_metric(metric, use_common_days_only=False):
 
 # Metrics to be plotted
 metrics = ['WND Normalized Bias', 'WND Normalized RMSE', 'WND CC', 'WND SI']
-#metrics = ['HS Normalized Bias', 'HS Normalized RMSE', 'HS CC', 'HS SI']
 
 # Switch to control plotting behavior
-plot_up_to_min_common_day = True  # Set to False to plot up to the full range available for each model
+plot_up_to_min_common_day = False  # Set to False to plot up to the full range available for each model
 
 for metric in metrics:
     plot_sorted_metric(metric, use_common_days_only=plot_up_to_min_common_day)
