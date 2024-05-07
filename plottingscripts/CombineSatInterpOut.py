@@ -130,23 +130,23 @@ def main():
             model_hs = np.append(model_hs, model_hs_tmpbase)
             model_wnd = np.append(model_wnd, model_wnd_tmpbase) 
   
-    #remove values we should not use for wind due to zero at fhr0
-    if model == "HR1":
-       model_wnd[fhrs<3]=np.nan 
-    elif model == "HR2":
-       model_wnd[fhrs<3]=np.nan 
-    elif model == "HR3a":
-       model_wnd[fhrs<1]=np.nan 
-    elif model == "HR3b":
-       model_wnd[fhrs<1]=np.nan 
-    #call write netcdf for whole time
+      #remove values we should not use for wind due to zero at fhr0
+      if model == "HR1":
+        model_wnd[fhrs<3]=np.nan 
+      elif model == "HR2":
+        model_wnd[fhrs<3]=np.nan 
+      elif model == "HR3a":
+        model_wnd[fhrs<1]=np.nan 
+      elif model == "HR3b":
+        model_wnd[fhrs<1]=np.nan 
+      #call write netcdf for whole time
 
-    outfilename=f"combined_{model}_{season[k]}_{satelites[j]}.nc"
-    write_netcdf_file(outfilename, model, satelites[j], time,lats, lons, fhrs, obs_hs, obs_hs_cal, obs_wnd, obs_wnd_cal, model_hs, model_wnd)
+      outfilename=f"combined_{model}_{season[k]}_{satelites[j]}.nc"
+      write_netcdf_file(outfilename, model, satelites[j], time,lats, lons, fhrs, obs_hs, obs_hs_cal, obs_wnd, obs_wnd_cal, model_hs, model_wnd)
    
-    day0=0
-    day=1 
-    while day <= endday:
+      day0=0
+      day=1 
+      while day <= endday:
         f0 = day0*24 
         f1 = day*24
         #it will likely be easier to match all models up if we don't filter nans out here... 
