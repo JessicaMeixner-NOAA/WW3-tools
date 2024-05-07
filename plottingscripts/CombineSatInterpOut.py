@@ -153,19 +153,19 @@ def main():
         #indx=np.where(( fhrs < f1 ) & ( fhrs > f0 ) & (~np.isnan(model_hs))) 
         indx=np.where(( fhrs < f1 ) & ( fhrs > f0 )) 
         time_day = time[indx]
-        lats_day = lats[idx] 
-        lons_day = lats[idx] 
-        fhrs_day = fhrs[idx]
+        lats_day = lats[indx] 
+        lons_day = lats[indx] 
+        fhrs_day = fhrs[indx]
         obs_hs_day = obs_hs[indx]
         obs_wnd_day = obs_wnd[indx]
-        obs_hs_cal_day = obs_cal_hs[indx]
-        obs_wnd_cal_day = obs_cal_wnd[indx]
+        obs_hs_cal_day = obs_hs_cal[indx]
+        obs_wnd_cal_day = obs_wnd_cal[indx]
         model_hs_day = model_hs[indx]
         model_wnd_day = model_wnd[indx]
       
         #call write netcdf 
         
-        outfilename=f"combined_day{f0}_{model}_{season[k]}_{satelites[j]}.nc"
+        outfilename=f"combined_day{day:02d}_{model}_{season[k]}_{satelites[j]}.nc"
         write_netcdf_file(outfilename, model, satelites[j], time_day,lats_day, lons_day, fhrs_day, obs_hs_day, obs_hs_cal_day, obs_wnd_day, obs_wnd_cal_day, model_hs_day, model_wnd_day)
 
         day0 = day
