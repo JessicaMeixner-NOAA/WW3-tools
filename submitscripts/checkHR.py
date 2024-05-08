@@ -12,7 +12,7 @@ model='HR3b'
 for k in range(len(season)):
    if season[k] == "winter":
        startdate = dt.datetime(2019,12,3)
-       enddate = dt.datetime(2020,2,20)
+       enddate = dt.datetime(2020,2,26)
        datestride = 3 
    elif season[k] == "summer":
        startdate = dt.datetime(2020,6,1)

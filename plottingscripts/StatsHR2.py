@@ -15,13 +15,10 @@ def main():
   satelites=['JASON3', 'CRYOSAT2', 'SARAL', 'SENTINEL3A'] #JASON3,JASON2,CRYOSAT2,JASON1,HY2,SARAL,SENTINEL3A,ENVISAT,ERS1,ERS2,GEOSAT,GFO,TOPEX,SENTINEL3B,CFOSAT
   #model=['multi1', 'GFSv16', 'HR1', 'HR2', 'HR3']
   model='HR2'
-  season=['hurricane']
-  satelites=['JASON3']
   for k in range(len(season)):
     if season[k] == "winter":
        startdate = dt.datetime(2019,12,3)
-       enddate = dt.datetime(2020,2,20)
-       enddate = dt.datetime(2019,12,9)
+       enddate = dt.datetime(2020,2,26)
        datestride = 3 
        endday = 16
     elif season[k] == "summer":

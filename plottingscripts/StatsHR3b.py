@@ -21,8 +21,7 @@ def main():
   for k in range(len(season)):
     if season[k] == "winter":
        startdate = dt.datetime(2019,12,3)
-       enddate = dt.datetime(2020,2,20)
-       enddate = dt.datetime(2019,12,9)
+       enddate = dt.datetime(2020,2,26)
        datestride = 3 
        endday = 16
     elif season[k] == "summer":
