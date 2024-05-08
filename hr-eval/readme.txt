@@ -7,6 +7,11 @@ Scripts used to create the plots:
 to get the specific day)
 You can do that automatically for different models using the config.json file.
 
+* An alternative script to obtain combined NetCDF files that is specific to the HR evaluations is CombineSatInterpOut.py 
+This script combines files by day, adds high resolution grid information for mutli1 and GFSv16.  It also adds NaNs to the
+model wind values where the grib file had zeros at f000.  The limitation of this routine is that it is not generic and 
+has hard-coded expectations of the file names.  It should work without modification on both hera or orion.   
+
 2- Then I used the eval.py to plot them. for plotting them you need to call pvalstats.py. The script is (eval.py). This is an automated process. In order to run the code you have to define the evalsumconfig.json. In this file you have to define the directory , filename, satellite name and then you can run the code.It accepts multiple pathes and filenames.
 
 3- for the statistcal analysis I used the code and called mvalstats.py to calculate the statistcs. (stat.py)It created the spreadsheets with this format ({folder}_stats.csv)
