@@ -17,9 +17,26 @@ def main():
 
   ap = argparse.ArgumentParser()
   ap.add_argument('-m', '--model', help="String Identifier of Model 'multi1', 'GFSv16', 'HR1', 'HR2', 'HR3a', 'HR3b'", required=True)
+  ap.add_argument('-o', '--outdir', help="Output directory for files", default='./')
   MyArgs = ap.parse_args()
 
   model = MyArgs.model
+  OUTDIR = MyArgs.outdir
+
+
+  #Check output directory exists: 
+  INPUTDIR=f"/work2/noaa/marine/jmeixner/processsatdata/outinterp/{model}"
+  if not os.path.isdir(INPUTDIR):
+    INPUTDIR=f"/scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/outinterp/{model}"
+    if not os.path.isdir(INPUTDIR):
+      print('INPUTDIR ({INPUTDIR}) does not exist!!!!') 
+      exit(1) 
+
+  #create OUTDIR directory if it does not exist: 
+  if not os.path.isdir(OUTDIR):
+    os.makedirs(OUTDIR)
+
+
 
   satelites=['JASON3', 'CRYOSAT2', 'SARAL', 'SENTINEL3A'] #JASON3,JASON2,CRYOSAT2,JASON1,HY2,SARAL,SENTINEL3A,ENVISAT,ERS1,ERS2,GEOSAT,GFO,TOPEX,SENTINEL3B,CFOSAT
 
@@ -73,10 +90,6 @@ def main():
             grids=['global.0p25']
 
          for g in range(len(grids)): 
-
-            INPUTDIR=f"/work2/noaa/marine/jmeixner/processsatdata/outinterp/{model}" 
-            if not os.path.isdir(INPUTDIR):
-              INPUTDIR=f"/scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/outinterp/{model}"
             
             if model == "multi1": 
                INPUT_FILE=f"{model}_{grids[g]}_{dates1[i]}_{satelites[j]}.nc"
@@ -139,10 +152,11 @@ def main():
         model_wnd[fhrs<1]=np.nan 
       elif model == "HR3b":
         model_wnd[fhrs<1]=np.nan 
-      #call write netcdf for whole time
 
+      #Call function to write out netcdf file with all forecast hours
       outfilename=f"combined_{model}_{season[k]}_{satelites[j]}.nc"
-      write_netcdf_file(outfilename, model, satelites[j], time,lats, lons, fhrs, obs_hs, obs_hs_cal, obs_wnd, obs_wnd_cal, model_hs, model_wnd)
+      OUTFILE = OUTDIR + '/' + outfilename 
+      write_netcdf_file(OUTFILE, model, satelites[j], time,lats, lons, fhrs, obs_hs, obs_hs_cal, obs_wnd, obs_wnd_cal, model_hs, model_wnd)
    
       day0=0
       day=1 
@@ -163,10 +177,10 @@ def main():
         model_hs_day = model_hs[indx]
         model_wnd_day = model_wnd[indx]
       
-        #call write netcdf 
-        
+        #Call function to write out netcdf file for each day
         outfilename=f"combined_day{day:02d}_{model}_{season[k]}_{satelites[j]}.nc"
-        write_netcdf_file(outfilename, model, satelites[j], time_day,lats_day, lons_day, fhrs_day, obs_hs_day, obs_hs_cal_day, obs_wnd_day, obs_wnd_cal_day, model_hs_day, model_wnd_day)
+        OUTFILE = OUTDIR + '/' + outfilename
+        write_netcdf_file(OUTFILE, model, satelites[j], time_day,lats_day, lons_day, fhrs_day, obs_hs_day, obs_hs_cal_day, obs_wnd_day, obs_wnd_cal_day, model_hs_day, model_wnd_day)
 
         day0 = day
         day = day + 1
