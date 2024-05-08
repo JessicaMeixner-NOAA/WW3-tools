@@ -198,7 +198,5 @@ def write_netcdf_file(nameoffile, nameofmodel,nameofsat, val_time, val_lats, val
         interpolated_dataset.to_netcdf(nameoffile, format='NETCDF4')
 
 
-
-
 if __name__ == '__main__':
     main()
