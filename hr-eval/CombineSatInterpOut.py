@@ -75,7 +75,7 @@ def main():
 
     for j in range(len(satelites)): 
       time = []; lats = []; lons = []
-      fhrs = []
+      fhrs = []; fhrsall = [];
       obs_hs = []; obs_wnd = []
       model_hs = []; model_wnd = []
       obs_hs_cal = []; obs_wnd_cal = []
@@ -112,6 +112,8 @@ def main():
                obs_wnd_cal_tmpbase = np.array(datanc.variables['obs_wnd_cal'][:])
                model_hs_tmpbase = np.array(datanc.variables['model_hs'][:])
                model_wnd_tmpbase = np.array(datanc.variables['model_wnd'][:]) 
+               initial_condition_time = datanc.getncattr('initial_condition_time')
+               fhrsall_tmpbas = (time_tmpbase - initial_condition_time)/3600 
             else: 
                #this is s a higher resolution sub-grid 
                time_tmphigh = np.array(datanc.variables['time'][:])
@@ -135,6 +137,8 @@ def main():
             lats = np.append(lats, lats_tmpbase)
             lons = np.append(lons, lons_tmpbase)
             fhrs = np.append(fhrs, fhrs_tmpbase)
+            fhrsall = np.append(fhrsall, fhrsall_tmpbas)
+
             obs_hs = np.append(obs_hs, obs_hs_tmpbase)
             obs_wnd = np.append(obs_wnd, obs_wnd_tmpbase)
             obs_hs_cal = np.append(obs_hs_cal, obs_hs_cal_tmpbase)
@@ -165,7 +169,7 @@ def main():
         f1 = day*24
         #it will likely be easier to match all models up if we don't filter nans out here... 
         #indx=np.where(( fhrs < f1 ) & ( fhrs > f0 ) & (~np.isnan(model_hs))) 
-        indx=np.where(( fhrs < f1 ) & ( fhrs > f0 )) 
+        indx=np.where(( fhrsall <= f1 ) & ( fhrsall > f0 )) 
         time_day = time[indx]
         lats_day = lats[indx] 
         lons_day = lats[indx] 
