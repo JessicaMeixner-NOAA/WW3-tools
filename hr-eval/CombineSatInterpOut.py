@@ -113,7 +113,7 @@ def main():
                model_hs_tmpbase = np.array(datanc.variables['model_hs'][:])
                model_wnd_tmpbase = np.array(datanc.variables['model_wnd'][:]) 
                initial_condition_time = datanc.getncattr('initial_condition_time')
-               fhrsall_tmpbas = (time_tmpbase - initial_condition_time)/3600 
+               fhrsall_tmpbase = (time_tmpbase - initial_condition_time)/3600 
             else: 
                #this is s a higher resolution sub-grid 
                time_tmphigh = np.array(datanc.variables['time'][:])
@@ -129,33 +129,33 @@ def main():
                #Check that obs values are the same for sanity check and if so, 
                #replace model values with high res inserts where HS is not nan 
                if ((obs_hs_tmphigh == obs_hs_tmpbase).all()): 
-                 np.where(~np.isnan(model_hs_tmphigh), model_hs_tmpbase, model_hs_tmphigh)
-                 np.where(~np.isnan(model_hs_tmphigh), model_wnd_tmpbase, model_wnd_tmphigh)
+                  np.where(~np.isnan(model_hs_tmphigh), model_hs_tmpbase, model_hs_tmphigh)
+                  np.where(~np.isnan(model_hs_tmphigh), model_wnd_tmpbase, model_wnd_tmphigh)
 
 
-            time = np.append(time, time_tmpbase) 
-            lats = np.append(lats, lats_tmpbase)
-            lons = np.append(lons, lons_tmpbase)
-            fhrs = np.append(fhrs, fhrs_tmpbase)
-            fhrsall = np.append(fhrsall, fhrsall_tmpbas)
+         time = np.append(time, time_tmpbase) 
+         lats = np.append(lats, lats_tmpbase)
+         lons = np.append(lons, lons_tmpbase)
+         fhrs = np.append(fhrs, fhrs_tmpbase)
+         fhrsall = np.append(fhrsall, fhrsall_tmpbase)
 
-            obs_hs = np.append(obs_hs, obs_hs_tmpbase)
-            obs_wnd = np.append(obs_wnd, obs_wnd_tmpbase)
-            obs_hs_cal = np.append(obs_hs_cal, obs_hs_cal_tmpbase)
-            obs_wnd_cal = np.append(obs_wnd_cal, obs_wnd_cal_tmpbase)
+         obs_hs = np.append(obs_hs, obs_hs_tmpbase)
+         obs_wnd = np.append(obs_wnd, obs_wnd_tmpbase)
+         obs_hs_cal = np.append(obs_hs_cal, obs_hs_cal_tmpbase)
+         obs_wnd_cal = np.append(obs_wnd_cal, obs_wnd_cal_tmpbase)
 
-            model_hs = np.append(model_hs, model_hs_tmpbase)
-            model_wnd = np.append(model_wnd, model_wnd_tmpbase) 
+         model_hs = np.append(model_hs, model_hs_tmpbase)
+         model_wnd = np.append(model_wnd, model_wnd_tmpbase) 
   
       #remove values we should not use for wind due to zero at fhr0
       if model == "HR1":
-        model_wnd[fhrs<3]=np.nan 
+         model_wnd[fhrs<3]=np.nan 
       elif model == "HR2":
-        model_wnd[fhrs<3]=np.nan 
+         model_wnd[fhrs<3]=np.nan 
       elif model == "HR3a":
-        model_wnd[fhrs<1]=np.nan 
+         model_wnd[fhrs<1]=np.nan 
       elif model == "HR3b":
-        model_wnd[fhrs<1]=np.nan 
+         model_wnd[fhrs<1]=np.nan 
 
       #Call function to write out netcdf file with all forecast hours
       outfilename=f"combined_{model}_{season[k]}_{satelites[j]}.nc"
