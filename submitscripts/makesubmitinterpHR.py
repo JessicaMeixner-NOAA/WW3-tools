@@ -81,6 +81,3 @@ SAT={satelites[j]}
                         f.write('python ${PathToWW3TOOLS}/ProcSat_interpolation.py -t grib2 -d $MODEL_DATA_DIR -p $MODEL_DATA_PATTERN -s $SATELLITE_FILE -o $OUTDIR -f $OUTPUT_FILE -m ${MODEL} \n')
 
 
-
-
-

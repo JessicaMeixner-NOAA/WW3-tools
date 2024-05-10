@@ -28,7 +28,6 @@ for k in range(len(season)):
    dates1 = []
    while nowdate <= enddate:
        dates1.append(nowdate.strftime('%Y%m%d%H'))
-       #nowdate = (nowdate + dt.timedelta(days=datestride)).strftime('%Y%m%d') 
        nowdate = nowdate + dt.timedelta(days=datestride)
     
    print(dates1)
@@ -104,9 +103,4 @@ SAT={satelites[j]}
                                f.write("MODEL_DATA_PATTERN='multi_1.wc_4m.t00z.f*.grib2'\n")
                                f.write('OUTPUT_FILE="${MODEL}_wcoast.0p06_${CDATE}_${SAT}.nc" \n')
                            f.write('python ${PathToWW3TOOLS}/ProcSat_interpolation.py -t grib2 -d $MODEL_DATA_DIR -p $MODEL_DATA_PATTERN -s $SATELLITE_FILE -o $OUTDIR -f $OUTPUT_FILE -m ${MODEL} \n')
-
-
-
-
-
 

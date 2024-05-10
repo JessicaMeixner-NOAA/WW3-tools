@@ -69,17 +69,3 @@ OUTDIR=/work2/noaa/marine/jmeixner/processsatdata/outinterp/{model}
                 f.write('python ${PathToWW3TOOLS}/ProcSat_interpolation.py -t grib2 -d $MODEL_DATA_DIR -p $MODEL_DATA_PATTERN -s $SATELLITE_FILE -o $OUTDIR -f $OUTPUT_FILE -m ${MODEL} \n')
                
 
-
-
-
-
-#/work/noaa/marine/jmeixner/Data/multi1/2019120300
-#multi_1.ak_10m.t00z.f180.grib2	multi_1.glo_30mext.t00z.f180.grib2
-#multi_1.ak_4m.t00z.f180.grib2	multi_1.glo_30m.t00z.f180.grib2    
-#multi_1.at_10m.t00z.f180.grib2	multi_1.wc_10m.t00z.f180.grib2	    
-#multi_1.at_4m.t00z.f180.grib2	multi_1.wc_4m.t00z.f180.grib2	     
-#multi_1.ep_10m.t00z.f180.grib2	
-
-
-
-
