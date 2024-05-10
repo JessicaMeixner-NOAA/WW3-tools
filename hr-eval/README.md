@@ -2,6 +2,9 @@
 
 ## Process Sat info 
 
+
+
+
 ## Interpolate model to statelite track 
 
 The first step here is to create the jobs that will need to be created.  There are three python scripts that will create these jobs: 
@@ -11,6 +14,13 @@ This file is currently hard-coded to use output files on orion and the rootdir a
 
 Since there are quite a few jobs to submit, there are also python scripts to create simply jobs to submit different batches of jobs.  These can be found in: 
 `hr-eval/InterpModel2Sat/makebatchgfs.py` `hr-eval/InterpModel2Sat/makebatchHR.py` `hr-eval/InterpModel2Sat/makebatchmulti1.py`
+
+There is a check script to ensure that all output is created from the interpolation. These are the `hr-eval/InterpModel2Sat/check*.py` scripts.  Also, there should be checks on file size and examining of logs to ensure all files are created. 
+
+
+#TODO 
+
+Then you can plot the output as an additional check of the output to ensure files are as correct 
 
 ## Combine output of interpolated model to satelite track 
 
