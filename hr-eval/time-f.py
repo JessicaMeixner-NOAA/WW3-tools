@@ -51,6 +51,8 @@ for model_config in config['models']:
                 initial_condition_time = dataset_model.getncattr('initial_condition_time')
                 model_wnd = dataset_model.variables['model_wnd'][:]
                 obs_wnd = dataset_model.variables['obs_wnd'][:]
+                fhrs = dataset_model.variables['fcst_hr'][:]
+
 
                 dataset_model.close()
 
@@ -59,7 +61,8 @@ for model_config in config['models']:
                 desired_end_time = initial_condition_time + (end_hours * 3600)
 
                 # Find indices for the desired time range
-                indices = np.where((time >= desired_start_time) & (time <= desired_end_time))[0]
+                indices = np.where((time > desired_start_time) & (time <= desired_end_time))[0]
+                #indices = np.where( (fhrs > start_hours) & ( fhrs < end_hours))
 
                 # Extract data for the desired time range
                 all_model_hs.append(model_hs[indices])
