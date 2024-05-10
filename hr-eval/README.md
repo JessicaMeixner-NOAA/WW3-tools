@@ -9,7 +9,9 @@
 The previous step is completed for each forecast hour and for multi-grid scenarios, each grid.  This step combines the output 
 by season for each model for each satelite, taking into account multi-grids for Multi1 and GFSv16.  For each model the following
 is run: 
-python CombineSatInterpOut.py -m $MODEL -o $OUTDIR 
+
+``` python CombineSatInterpOut.py -m $MODEL -o $OUTDIR ```
+
 where MODEL=multi1, GFSv16, HR1, HR2, HR3a, HR3b and OUTDIR is the desired output directory. 
 
 The output is a series of files 
@@ -22,13 +24,19 @@ Note, the size of the mutli1 files are smaller because it does not have the same
 output for GFSv16 is lareger than HR runs as it goes out to 16, not 7 days. 
 
 The number of expected output files is: 
- 96 for multi1 ( (7 days + 1 combined) x ( 3 seasons ) x (4 satelites) ) 
- 100 for GFSv16 ( (7 days + 1 combined) x (1 hurricane season) x (4 satelites) + (16 days + 1 combined) x (1 summer season) x (4 satelites) )
- 168 for HR experiements ( (7 days + 1 combined) x (1 hurricane season) x (4 satelites) + (16 days + 1 combined) x (2 summer/winter season) x (4 satelites ))
+
+| Number of Files | Model | Calculation | 
+|:------------------:|:-----------------:|:----------------------:|
+| 96 |  multi1  | ( (7 days + 1 combined) x ( 3 seasons ) x (4 satelites) ) | 
+|  100 |  GFSv16  | ( (7 days + 1 combined) x (1 hurricane season) x (4 satelites) + (16 days + 1 combined) x (1 summer season) x (4 satelites) ) |
+|  168 |  HR experiements |  ( (7 days + 1 combined) x (1 hurricane season) x (4 satelites) + (16 days + 1 combined) x (2 summer/winter season) x (4 satelites )) |
 
 This steps output can be found: 
-hera: /scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/combineout
-orion: /work2/noaa/marine/jmeixner/processsatdata/combineout
+
+| Machine | Directory Location | 
+|:------------------:|:-----------------:|
+| hera | /scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/combineout|
+| orion |  /work2/noaa/marine/jmeixner/processsatdata/combineout |
 
 
 ## Scripts used to create the plots: 
