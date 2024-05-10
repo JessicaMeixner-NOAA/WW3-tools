@@ -4,6 +4,14 @@
 
 ## Interpolate model to statelite track 
 
+The first step here is to create the jobs that will need to be created.  There are three python scripts that will create these jobs: 
+`hr-eval/InterpModel2Sat/makesubmitinterpgfsv16.py` `hr-eval/InterpModel2Sat/makesubmitinterpHR.py` `hr-eval/InterpModel2Sat/makesubmitinterpmulti1.py`
+
+This file is currently hard-coded to use output files on orion and the rootdir at the top of each of these would need to be changed to write into someone's directory.   The makesubmitinterpHR needs to be run for each HR experiment. 
+
+
+
+
 ## Combine output of interpolated model to satelite track 
 
 The previous step is completed for each forecast hour and for multi-grid scenarios, each grid.  This step combines the output 
