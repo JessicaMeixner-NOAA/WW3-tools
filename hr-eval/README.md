@@ -9,8 +9,8 @@ The first step here is to create the jobs that will need to be created.  There a
 
 This file is currently hard-coded to use output files on orion and the rootdir at the top of each of these would need to be changed to write into someone's directory.   The makesubmitinterpHR needs to be run for each HR experiment. 
 
-
-
+Since there are quite a few jobs to submit, there are also python scripts to create simply jobs to submit different batches of jobs.  These can be found in: 
+`hr-eval/InterpModel2Sat/makebatchgfs.py` `hr-eval/InterpModel2Sat/makebatchHR.py` `hr-eval/InterpModel2Sat/makebatchmulti1.py`
 
 ## Combine output of interpolated model to satelite track 
 
