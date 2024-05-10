@@ -2,7 +2,7 @@
 
 ## Process Sat info 
 
-There is a routine `hr-eval/makeprocsatsubmit.py` that is a python script that generates multiple submit scripts that will process each satelite for the dates requested in the routine. This is still a hard-coded script, but can be modified for others needs.  
+There is a routine `hr-eval/makeprocsatsubmit.py` that is a python script that generates multiple submit scripts that will process each satelite for the dates requested in the routine. This is still a hard-coded script, but can be modified for others needs.   The configuration files that are used to process each satelite is in `hr-eval/configs`
 
 #TODO
 Add info on how this step can and should be checked
