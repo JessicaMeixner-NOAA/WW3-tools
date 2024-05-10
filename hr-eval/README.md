@@ -1,4 +1,37 @@
-Scripts used to create the plots: 
+### HR Evaluation Steps 
+
+## Process Sat info 
+
+## Interpolate model to statelite track 
+
+## Combine output of interpolated model to satelite track 
+
+The previous step is completed for each forecast hour and for multi-grid scenarios, each grid.  This step combines the output 
+by season for each model for each satelite, taking into account multi-grids for Multi1 and GFSv16.  For each model the following
+is run: 
+python CombineSatInterpOut.py -m $MODEL -o $OUTDIR 
+where MODEL=multi1, GFSv16, HR1, HR2, HR3a, HR3b and OUTDIR is the desired output directory. 
+
+The output is a series of files 
+`combined_${MODEL}_${SEASON}_${SATELITE}.nc`
+for the combined output and then `combined_day${DAY}_${MODEL}_${SEASON}_${SATELITE}.nc` for the model output for each day. 
+
+To check this, we need to make sure that we have all of the expected files exist and that they all are of non-zero size, 
+in addition to checking that there were not errors in the log files from the jobs. 
+Note, the size of the mutli1 files are smaller because it does not have the same length of forecast and the hurricane 
+output for GFSv16 is lareger than HR runs as it goes out to 16, not 7 days. 
+
+The number of expected output files is: 
+ 96 for multi1 ( (7 days + 1 combined) x ( 3 seasons ) x (4 satelites) ) 
+ 100 for GFSv16 ( (7 days + 1 combined) x (1 hurricane season) x (4 satelites) + (16 days + 1 combined) x (1 summer season) x (4 satelites) )
+ 168 for HR experiements ( (7 days + 1 combined) x (1 hurricane season) x (4 satelites) + (16 days + 1 combined) x (2 summer/winter season) x (4 satelites ))
+
+This steps output can be found: 
+hera: /scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/combineout
+orion: /work2/noaa/marine/jmeixner/processsatdata/combineout
+
+
+## Scripts used to create the plots: 
 
 1- first of all I tried to get the .nc files for example day1, day2, ... , day7. The reason that I chose to save the 
 .nc files is that for me it was easier to do the statistcs using the .nc output. (You may have other ideas)  
