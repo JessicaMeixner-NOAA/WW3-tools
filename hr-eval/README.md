@@ -70,25 +70,16 @@ The number of expected output files is:
 
 This steps output can be found: 
 
-| Machine | Directory Location | 
+| Machine | Output Locations  | 
 |:------------------:|:-----------------|
-| hera | /scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/combineout|
-| orion |  /work2/noaa/marine/jmeixner/processsatdata/combineout |
+| hera | `/scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/combineout/combined_${MODEL}_${SEASON}_${SATELITE}.nc` `/scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/combineout/combined_day${DAY}_${MODEL}_${SEASON}_${SATELITE}.nc`|
+| orion |  `/work2/noaa/marine/jmeixner/processsatdata/combineout/combined_${MODEL}_${SEASON}_${SATELITE}.nc` `/work2/noaa/marine/jmeixner/processsatdata/combineout/combined_day${DAY}_${MODEL}_${SEASON}_${SATELITE}.nc` |
+
+#TODO 
+A previous way of combining scripts was using time-f.py which required the config.json. Do we keep these as is or move to a foler or remove?  
 
 
 ## Scripts used to create the plots: 
-
-1- first of all I tried to get the .nc files for example day1, day2, ... , day7. The reason that I chose to save the 
-.nc files is that for me it was easier to do the statistcs using the .nc output. (You may have other ideas)  
-(code is time-f.py)
-(we have satellite interpolated outputs. In order to get the first day of different initial conditions, I used time-f.py 
-to get the specific day)
-You can do that automatically for different models using the config.json file.
-
-* An alternative script to obtain combined NetCDF files that is specific to the HR evaluations is CombineSatInterpOut.py 
-This script combines files by day, adds high resolution grid information for mutli1 and GFSv16.  It also adds NaNs to the
-model wind values where the grib file had zeros at f000.  The limitation of this routine is that it is not generic and 
-has hard-coded expectations of the file names.  It should work without modification on both hera or orion.   
 
 2- Then I used the eval.py to plot them. for plotting them you need to call pvalstats.py. The script is (eval.py). This is an automated process. In order to run the code you have to define the evalsumconfig.json. In this file you have to define the directory , filename, satellite name and then you can run the code.It accepts multiple pathes and filenames.
 
