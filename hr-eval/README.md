@@ -7,6 +7,12 @@ There is a routine `hr-eval/makeprocsatsubmit.py` that is a python script that g
 #TODO
 Add info on how this step can and should be checked
 
+The output of this step can be found: 
+
+| Machine | Directory Location |
+|:------------------:|:-----------------:|
+| orion | `/work/noaa/marine/jmeixner/Data/processedsatdata/Altimeter_${SATELITE}_HR${SEASON}.nc` | 
+
 
 ## Interpolate model to statelite track 
 
@@ -19,6 +25,16 @@ Since there are quite a few jobs to submit, there are also python scripts to cre
 `hr-eval/InterpModel2Sat/makebatchgfs.py` `hr-eval/InterpModel2Sat/makebatchHR.py` `hr-eval/InterpModel2Sat/makebatchmulti1.py`
 
 There is a check script to ensure that all output is created from the interpolation. These are the `hr-eval/InterpModel2Sat/check*.py` scripts.  Also, there should be checks on file size and examining of logs to ensure all files are created. 
+
+The output of this step can be found: 
+
+| Machine | Directory Location |
+|:------------------:|:-----------------:|
+| hera | `/scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/outinterp/${MODEL}/${MODEL}_${GRID}_${SEASON}_${ICDATE}_${SATELITE}.nc`|
+| orion | `/work2/noaa/marine/jmeixner/processsatdata/outinterp/${MODEL}/${MODEL}_${GRID}_${SEASON}_${ICDATE}_${SATELITE}.nc`|
+
+Note that GFSv16 and Multi1 do not have "seasons" in their naming conventions.   
+
 
 
 #TODO 
