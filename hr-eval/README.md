@@ -10,7 +10,7 @@ Add info on how this step can and should be checked
 The output of this step can be found: 
 
 | Machine | Directory Location |
-|:------------------:|:-----------------:|
+|:------------------:|:-----------------|
 | orion | `/work/noaa/marine/jmeixner/Data/processedsatdata/Altimeter_${SATELITE}_HR${SEASON}.nc` | 
 
 
@@ -29,7 +29,7 @@ There is a check script to ensure that all output is created from the interpolat
 The output of this step can be found: 
 
 | Machine | Directory Location |
-|:------------------:|:-----------------:|
+|:------------------:|:-----------------|
 | hera | `/scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/outinterp/${MODEL}/${MODEL}_${GRID}_${SEASON}_${ICDATE}_${SATELITE}.nc`|
 | orion | `/work2/noaa/marine/jmeixner/processsatdata/outinterp/${MODEL}/${MODEL}_${GRID}_${SEASON}_${ICDATE}_${SATELITE}.nc`|
 
@@ -71,7 +71,7 @@ The number of expected output files is:
 This steps output can be found: 
 
 | Machine | Directory Location | 
-|:------------------:|:-----------------:|
+|:------------------:|:-----------------|
 | hera | /scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/combineout|
 | orion |  /work2/noaa/marine/jmeixner/processsatdata/combineout |
 
