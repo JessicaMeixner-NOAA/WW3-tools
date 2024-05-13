@@ -51,6 +51,7 @@ for folder in folders:
                 'HS SI': [rmse_hs_result[5]],
                 'HS HH': [rmse_hs_result[6]],
                 'HS CC': [rmse_hs_result[7]],
+                'HS N': [rmse_hs_result[8]],
                 'WND Bias': [rmse_wnd_result[0]],
                 'WND RMSE': [rmse_wnd_result[1]],
                 'WND Normalized Bias': [rmse_wnd_result[2]],
@@ -58,7 +59,8 @@ for folder in folders:
                 'WND SCrmse': [rmse_wnd_result[4]],
                 'WND SI': [rmse_wnd_result[5]],
                 'WND HH': [rmse_wnd_result[6]],
-                'WND CC': [rmse_wnd_result[7]]
+                'WND CC': [rmse_wnd_result[7]],
+                'WND N': [rmse_wnd_result[8]]
             })
             
             # Append the statistics DataFrame to the list
