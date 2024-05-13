@@ -27,12 +27,12 @@ def main(model_file, satellite_file):
     model_times = load_unix_times(model_file)
     lats_model = model_nc.variables['latitude'][:]
     lons_model = model_nc.variables['longitude'][:]
-    hs_model = model_nc.variables['HTSGW_surface'][0, :, :]  # First time step, assuming time is first dimension
+    hs_model = model_nc.variables['HTSGW_surface'][0, :, :]  
 
     # Efficient matching using broadcasting
     time_diffs = np.abs(altimeter_times[:, np.newaxis] - model_times)
     min_diffs = np.min(time_diffs, axis=1)
-    match_indices = np.where(min_diffs <= 20)[0]  # 6 hours threshold
+    match_indices = np.where(min_diffs <= 20)[0]  # any seconds/ hours threshold
     model_match_indices = np.argmin(time_diffs[match_indices], axis=1)
 
     # Extract matched data points
@@ -81,7 +81,7 @@ def main(model_file, satellite_file):
     plt.title('Global Significant Wave Height: Model vs Altimeter Matched Observations')
 
     plt.savefig('matched_wave_heights_map_zoomed.png', dpi=300, bbox_inches='tight')  # Save the figure
-    plt.show()  # Display the figure on the screen
+   # plt.show()  # Display the figure on the screen
 
 if __name__ == "__main__":
     # Parse command-line arguments
