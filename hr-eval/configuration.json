@@ -1,0 +1,14 @@
+{
+  "process_buoys_separately": true,
+  "directory_path": "/scratch2/NCEPDEV/marine/Ghazal.Mohammadpour/Tools/Buoy_branch/WW3-tools/ww3tools/buoyval-hr1/hurricane",
+  "forecast_ranges": [
+    [0, 24],
+    [24, 48],
+    [48, 72],
+    [72, 96],
+    [96, 120],
+    [120, 144],
+    [144, 168]
+  ]
+}
+
