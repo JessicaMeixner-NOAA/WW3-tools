@@ -1,0 +1,19 @@
+{
+  "process_buoys_separately": false,
+  "models": {
+    "hr3a": "/scratch2/NCEPDEV/marine/Ghazal.Mohammadpour/Tools/Buoyval-HR3a/Buoy_branch/WW3-tools/ww3tools/xxx",
+    "hr3b": "/scratch2/NCEPDEV/marine/Ghazal.Mohammadpour/Tools/Buoyval-HR3b/Buoy_branch/WW3-tools/ww3tools/xxx"
+  },
+  "forecast_ranges": [
+    [3, 24],
+    [24, 48],
+    [48, 72],
+    [72, 96],
+    [96, 120],
+    [120, 144],
+    [144, 168]
+  ],
+  "plot_combined_taylor": true,
+  "directory_path": "/scratch2/NCEPDEV/marine/Ghazal.Mohammadpour/Tools/xxx"
+}
+

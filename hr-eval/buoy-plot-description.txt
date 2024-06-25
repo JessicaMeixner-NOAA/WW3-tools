@@ -1,0 +1,7 @@
+There is two formats of compare-all-buoy-sh.py which I only defined it for hr3a,b. I plotted them separetly and used a separate code because it was more easier and organzed for me. 
+
+There is another script which is compare-all-buoy-lo.py I have all other four models. 
+
+User should modify the configuration.json (you can change the name to any names you want just be carefull to change that in the script as well) to icnclude any models that he wants. 
+
+Both codes and a sample configuration (configuration3.py and configuration4.py) files are provided in this github branch. They are the same you only have to modify them to models you want.

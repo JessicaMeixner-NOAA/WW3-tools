@@ -1,0 +1,23 @@
+{
+  "process_buoys_separately": true,
+  "calculate_combined_statistics": false,
+  "models": {
+    "hr1": "/scratch2/NCEPDEV/marine/Ghazal.Mohammadpour/Tools/Buoyval-HR1_2/WW3-tools/ww3tools/buoyval-hr1/hurricane",
+    "hr2": "/scratch2/NCEPDEV/marine/Ghazal.Mohammadpour/Tools/Buoyval-HR1_2/WW3-tools/ww3tools/buoyval-hr2/hurricane",
+    "multi1": "/scratch2/NCEPDEV/marine/Ghazal.Mohammadpour/Tools/Buoyval-multi1/Buoy_branch/WW3-tools/ww3tools/buoyval_multi1/hurricane",
+    "gfsv16": "/scratch2/NCEPDEV/marine/Ghazal.Mohammadpour/Tools/Buoyval-gfsv16/Buoy_branch/WW3-tools/ww3tools/buoyval-gfsv16/hurricane"
+  },
+  "forecast_ranges": [
+    [3, 24],
+    [24, 48],
+    [48, 72],
+    [72, 96],
+    [96, 120],
+    [120, 144],
+    [144, 168],
+    [3,168]
+  ],
+  "plot_combined_taylor": false,
+  "directory_path": "/scratch2/NCEPDEV/marine/Ghazal.Mohammadpour/Tools/hurricane-imp"
+}
+
