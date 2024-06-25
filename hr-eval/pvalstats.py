@@ -194,7 +194,7 @@ class ModelObsPlot:
             np.array(np.atleast_1d(['.','.','.','.','.','.','.','.','.','.','.','.','.','.','.',])).astype('str'))
 
         self.color = (color if color is not None else
-            np.array(['darkred', 'purple', 'darkgreen', 'darkorange', 'deeppink', 'blue', 'brown', 'salmon', 'lime', 'darkviolet', 'yellow',
+            np.array(['darkblue', 'darkred', 'darkgreen', 'darkorange', 'purple', 'deeppink', 'brown', 'salmon', 'lime', 'darkviolet', 'yellow',
                 'cornflowerblue', 'red', 'green', 'violet', 'orange']))
 
         if self.model.ndim > 2 or self.obs.ndim > 2:
@@ -246,8 +246,8 @@ class ModelObsPlot:
         self.fctxt = fctxt
         self.fctunits = fctunits
         self.fctxticks = fctxticks
-        # name of the 8 error metrics
-        self.nerrm=np.array(['bias','RMSE','NBias','NRMSE','SCrmse','SI','HH','CC'])
+        # name of the 9 error metrics
+        self.nerrm=np.array(['bias','RMSE','NBias','NRMSE','SCrmse','SI','HH','CC','N'])
 
     def timeseries(self):
         '''
@@ -427,7 +427,8 @@ class ModelObsPlot:
         plt.savefig(self.ftag+'QQplot.png', dpi=200, facecolor='w', edgecolor='w',orientation='portrait', format='png',transparent=False, bbox_inches='tight', pad_inches=0.1)
         plt.close(fig1); del fig1, ax
 
-    def scatterplot(self):
+
+    def scatterplot(self, dwscl='no'):
         '''
         Scatter plot.
         Inputs:
@@ -435,6 +436,10 @@ class ModelObsPlot:
            the model array can include one or more model results, through the number of columns, while
            the observation array must be one-dimensional, with the same number of lines as the model.
           Optional: see object construction above.
+          - mlabels: List containing labels for each model. Default is an empty list.
+          - ftag: Path to save the figure. Default is the current directory.
+          - dwscl: Whether to apply downsampling. Default is 'no'. If set to 'no', downsampling is not applied.
+                If set to any other value, downsampling is applied.
         Output: png figure saved in the local directory where python is running or in the path given through ftag.
         Example:
           from pvalstats import ModelObsPlot
@@ -443,26 +448,32 @@ class ModelObsPlot:
 
           mop=ModelObsPlot(model=np.c_[model1[:],model2[:]],obs=buoydata[:],axisnames=["WW3","Buoy"],
               mlabels=["WW3T1","WW3T2"],ftag="/home/ricardo/testWW3/NewRun_")
+          mop.scatterplot(dwscl='yes') yes=downsampling; no: No downsampling
           mop.scatterplot()
         '''
 
-        num_points_plotted = 0  # Initialize counter
+        if self.obs[0,:].shape[0] > 50000 and dwscl != 'no':
+            sk = int(np.round(float(self.obs[0,:].shape[0]) / 30000., 0))
+        else:
+            sk = 1
 
-        a = math.floor(np.nanmin(np.append(self.obs, self.model)) * 100.) / 100.
-        b = math.ceil(np.nanmax(np.append(self.obs, self.model)) * 100.) / 100.
+        a = math.floor(np.nanmin(np.append(self.obs[:,::sk], self.model[:,::sk])) * 100.) / 100.
+        b = math.ceil(np.nanmax(np.append(self.obs[:,::sk], self.model[:,::sk])) * 100.) / 100.
         famin = a - 0.1 * a
         famax = b + 0.1 * a
         aux = np.linspace(famin, famax, 100)
-        
+
+
         # plot
         fig1 = plt.figure(1, figsize=(5, 4.5))
         ax = fig1.add_subplot(111)
 
         for i in range(0, self.model.shape[0]):
-            b = np.array(self.obs)
-            a = np.array(self.model[i])
-
-            num_points_plotted += len(a)
+            b = np.array(self.obs[0,::sk])
+            a = np.array(self.model[i,::sk])
+            ind = np.where((a*b) > -999.)[0]
+            a = np.copy(a[ind])
+            b = np.copy(b[ind])
 
             if (a.shape[0] < 30) or (self.model.shape[0] > 1):
                 if np.size(self.mlabels) > 0:
@@ -472,7 +483,7 @@ class ModelObsPlot:
                         ax.scatter(b, a, color=self.color[i], marker=self.marker[i], zorder=2)
                 else:
                     ax.scatter(b, a, color=self.color[i], marker=self.marker[i], zorder=2)
-            elif (np.size(self.color) == 1) & (self.model.shape[0] == 1):
+            elif (np.size(self.color) == 1) and (self.model.shape[0] == 1):
                 ax.scatter(b, a, color=self.color[i], marker=self.marker[i], zorder=2)
             else:
                 xy = np.vstack([a, b])
@@ -491,11 +502,11 @@ class ModelObsPlot:
                 ax.plot(aux, aregr, color=self.color[i], ls='-', linewidth=1., alpha=0.8, zorder=4)
                 ax.plot(aux, aregr, color='k', ls=':', linewidth=0.7, alpha=0.7, zorder=4)
                 if np.size(self.mlabels) > 0:
-                    print(self.ftag + "ScatterPlot " + self.mlabels[i] + ": Slope " + np.str(
-                        np.round(float(r.slope), 5)) + ", Intercept " + np.str(np.round(float(r.intercept), 5)))
+                    print(self.ftag + "ScatterPlot " + self.mlabels[i] + ": Slope " + np.str(np.round(float(r.slope), 5))
+                          + ", Intercept " + np.str(np.round(float(r.intercept), 5)))
                 else:
-                    print(self.ftag + "ScatterPlot: Slope " + np.str(np.round(float(r.slope), 5)) + ", Intercept " + np.str(
-                        np.round(float(r.intercept), 5)))
+                    print(self.ftag + "ScatterPlot: Slope " + np.str(np.round(float(r.slope), 5)) + ", Intercept "
+                          + np.str(np.round(float(r.intercept), 5)))
                 del r, aregr
 
             del a, b
@@ -528,9 +539,10 @@ class ModelObsPlot:
         plt.close(fig1)
         del fig1, ax
 
-        print("Number of data points plotted:", num_points_plotted)
 
-    def taylordiagram(self):
+
+
+    def taylordiagram(self, sdev=None, crmsd=None, ccoef=None):
         '''
         Taylor Diagram using skill_metrics.
         https://github.com/PeterRochford/SkillMetrics
@@ -553,93 +565,123 @@ class ModelObsPlot:
         import skill_metrics as sm
 
         # Organizing labels for the Taylor Diagram
-        if np.size(self.mlabels)>0:
-            label = np.append(['Obs'],self.mlabels)
+        if np.size(self.mlabels) > 0:
+            label = np.append(['Obs'], self.mlabels)
         else:
             if self.model.shape[0] > 1:
                 label = np.array(['Obs'])
-                for j in range(0,self.model.shape[0]):
-                    label = np.append(label,['Model'+repr(j+1)])
+                for j in range(0, self.model.shape[0]):
+                    label = np.append(label, ['Model' + repr(j + 1)])
             else:
-                label = np.array(['Obs','Model'])
+                label = np.array(['Obs', 'Model'])
 
         # remove NaN
-        ind=np.where( (np.mean(self.model,axis=0)>-999.) & (np.mean(self.obs,axis=0)>-999.) )
-        if np.size(ind)>0:
-            model=np.copy(self.model[:,ind[0]]); obs=np.copy(self.obs[:,ind[0]]); del ind
+        ind = np.where((np.mean(self.model, axis=0) > -999.) & (np.mean(self.obs, axis=0) > -999.))
+        if np.size(ind) > 0:
+            model = np.copy(self.model[:, ind[0]])
+            obs = np.copy(self.obs[:, ind[0]])
+            del ind
         else:
             raise ValueError(' No quality data available.')
 
-        # plot
-        fig1 = plt.figure(1,figsize=(7,6)); ax = fig1.add_subplot(111)
-        # initial statistics
-        ts = sm.taylor_statistics(model[0,:],obs[0,:])
-        sdev=np.array(ts['sdev'][0]); crmsd=np.array(ts['crmsd'][0]); ccoef=np.array(ts['ccoef'][0])
-        for i in range(0,model.shape[0]):
-            ts = sm.taylor_statistics(model[i,:],obs[0,:])
-            sdev=np.append(sdev,ts['sdev'][1])
-            crmsd=np.append(crmsd,ts['crmsd'][1])
-            ccoef=np.append(ccoef,ts['ccoef'][1])
+        # Initialize statistics arrays if not provided
+        if sdev is None or crmsd is None or ccoef is None:
+            sdev = []
+            crmsd = []
+            ccoef = []
+            for i in range(0, model.shape[0]):
+                ts = sm.taylor_statistics(model[i, :], obs[0, :])
+                sdev.append(ts['sdev'][1])
+                crmsd.append(ts['crmsd'][1])
+                ccoef.append(ts['ccoef'][1])
+            sdev = np.array([ts['sdev'][0]] + sdev)
+            crmsd = np.array([ts['crmsd'][0]] + crmsd)
+            ccoef = np.array([ts['ccoef'][0]] + ccoef)
+        else:
+            sdev = np.array(sdev)
+            crmsd = np.array(crmsd)
+            ccoef = np.array(ccoef)
+
+        # Validate the length of provided statistics
+        if len(sdev) != model.shape[0] + 1 or len(crmsd) != model.shape[0] + 1 or len(ccoef) != model.shape[0] + 1:
+            raise ValueError("Length of provided statistics must match the number of models plus one (for observations).")
 
         # formatting
-        if crmsd.max()>0.8: npr=int(2)
-        else: npr=int(3)
-        tRMS = np.array(np.linspace(0,np.round(crmsd.max()+0.1*crmsd.max(),npr),5)).round(npr)
+        if crmsd.max() > 0.8:
+            npr = int(2)
+        else:
+            npr = int(3)
+        tRMS = np.array(np.linspace(0, np.round(crmsd.max() + 0.1 * crmsd.max(), npr), 5)).round(npr)
 
-        if sdev.max()>0.8: npr=int(2)
-        else: npr=int(3)
-        axmax = np.round(sdev.max()+0.5*sdev.max(),npr)
+        if sdev.max() > 0.8:
+            npr = int(2)
+        else:
+            npr = int(3)
+        axmax = np.round(sdev.max() + 0.5 * sdev.max(), npr)
 
-        if (sdev.max()+0.4*sdev.max())>0.8: npr=int(2)
-        else: npr=int(3)
-        tSTD = np.array(np.linspace(sdev.min()-0.3*sdev.max(),np.round(sdev.max()+0.4*sdev.max(),npr),4)).round(npr)
+        if (sdev.max() + 0.4 * sdev.max()) > 0.8:
+            npr = int(2)
+        else:
+            npr = int(3)
+        tSTD = np.array(np.linspace(sdev.min() - 0.3 * sdev.max(), np.round(sdev.max() + 0.4 * sdev.max(), npr), 4)).round(npr)
         del npr
 
-        fp1=1.07; fp2=1.03; fp3=0.055; fp4=13
-        if np.size(label)>8:
-            fp2=1.07; fp3=0.040; fp4=12
-        elif np.size(label)>5:
-            fp2=1.06; fp3=0.045
+        fp1 = 1.07
+        fp2 = 1.03
+        fp3 = 0.055
+        fp4 = 13
+        if np.size(label) > 8:
+            fp2 = 1.07
+            fp3 = 0.040
+            fp4 = 12
+        elif np.size(label) > 5:
+            fp2 = 1.06
+            fp3 = 0.045
 
-        slmax=0
-        for i in range(0,np.size(label)):
-            if len(label[i])>slmax:
-                slmax=int(len(label[i]))
+        slmax = 0
+        for i in range(0, np.size(label)):
+            if len(label[i]) > slmax:
+                slmax = int(len(label[i]))
 
-        if slmax>11:
-            fp1=1.04; fp4=12
-        elif slmax>8:
-            fp1=1.04
+        if slmax > 11:
+            fp1 = 1.04
+            fp4 = 12
+        elif slmax > 8:
+            fp1 = 1.04
+
+        fig1 = plt.figure(1, figsize=(7, 6))
+        ax = fig1.add_subplot(111)
 
         # loop through models
-        for i in range(0,model.shape[0]):
-            if i==0:
-                sm.taylor_diagram(sdev.take([0,i+1]), crmsd.take([0,i+1]), ccoef.take([0,i+1]), locationColorBar = 'EastOutside',  markerColor = self.color[i],
-                    # markerLegend = 'on', markerLabel = list(label.take([0,i+1])),
-                    styleOBS = '-', colOBS = 'k', markerobs = 'o', titleOBS = 'Obs', 
-                    markerSize = 17, tickRMS = tRMS, axismax = axmax, alpha=0.7, tickSTD = tSTD,
-                    tickRMSangle = 87, showlabelsRMS = 'on',
-                    colRMS='dimgrey', styleRMS=':', widthRMS=1.0, titleRMS='off',
-                    colSTD='k', styleSTD='-.', widthSTD=1.0, titleSTD ='on',
-                    colCOR='k', styleCOR='--', widthCOR=1.0, titleCOR='on')
+        for i in range(0, model.shape[0]):
+            if i == 0:
+                sm.taylor_diagram(sdev.take([0, i + 1]), crmsd.take([0, i + 1]), ccoef.take([0, i + 1]), locationColorBar='EastOutside', markerColor=self.color[i],
+                                  styleOBS='-', colOBS='k', markerobs='o', titleOBS='Obs',
+                                  markerSize=17, tickRMS=tRMS, axismax=axmax, alpha=0.7, tickSTD=tSTD,
+                                  tickRMSangle=87, showlabelsRMS='on',
+                                  colRMS='dimgrey', styleRMS=':', widthRMS=1.0, titleRMS='off',
+                                  colSTD='k', styleSTD='-.', widthSTD=1.0, titleSTD='on',
+                                  colCOR='k', styleCOR='--', widthCOR=1.0, titleCOR='on')
 
             else:
-                sm.taylor_diagram(sdev.take([0,i+1]), crmsd.take([0,i+1]), ccoef.take([0,i+1]), overlay = 'on', locationColorBar = 'EastOutside',  markerColor = self.color[i],
-                    # markerLegend = 'on', markerLabel = list(label.take([0,i+1])), 
-                    styleOBS = '-', colOBS = 'k', markerobs = 'o', titleOBS = 'Obs', 
-                    markerSize = 17, tickRMS = tRMS, axismax = axmax, alpha=0.5, tickSTD = tSTD,
-                    tickRMSangle = 87, showlabelsRMS = 'on',
-                    colRMS='dimgrey', styleRMS=':', widthRMS=1.0, titleRMS='off',
-                    colSTD='k', styleSTD='-.', widthSTD=1.0, titleSTD ='on',
-                    colCOR='k', styleCOR='--', widthCOR=1.0, titleCOR='on')
+                sm.taylor_diagram(sdev.take([0, i + 1]), crmsd.take([0, i + 1]), ccoef.take([0, i + 1]), overlay='on', locationColorBar='EastOutside', markerColor=self.color[i],
+                                  styleOBS='-', colOBS='k', markerobs='o', titleOBS='Obs',
+                                  markerSize=17, tickRMS=tRMS, axismax=axmax, alpha=0.5, tickSTD=tSTD,
+                                  tickRMSangle=87, showlabelsRMS='on',
+                                  colRMS='dimgrey', styleRMS=':', widthRMS=1.0, titleRMS='off',
+                                  colSTD='k', styleSTD='-.', widthSTD=1.0, titleSTD='on',
+                                  colCOR='k', styleCOR='--', widthCOR=1.0, titleCOR='on')
 
-            if np.size(self.mlabels)>0: 
-                ax.text(fp1, fp2-(fp3*i), label[i+1], verticalalignment='bottom', horizontalalignment='right',
-                    transform=ax.transAxes,color=self.color[i], fontsize=fp4)
+            if np.size(self.mlabels) > 0:
+                ax.text(fp1, fp2 - (fp3 * i), label[i + 1], verticalalignment='bottom', horizontalalignment='right',
+                        transform=ax.transAxes, color=self.color[i], fontsize=fp4)
 
         plt.tight_layout()
-        plt.savefig(self.ftag+'TaylorDiagram.png', dpi=250, facecolor='w', edgecolor='w',orientation='portrait', format='png',transparent=False, bbox_inches='tight', pad_inches=0.1)
-        plt.close(fig1); del fig1, ax
+        plt.savefig(self.ftag + 'TaylorDiagram.png', dpi=250, facecolor='w', edgecolor='w', orientation='portrait', format='png', transparent=False, bbox_inches='tight', pad_inches=0.1)
+        plt.close(fig1)
+        del fig1, ax
+
+
 
     def combinerrors(self):
         '''
