@@ -1,3 +1,62 @@
+"""
+
+
+# Description on How to Use the Code
+# This script processes and analyzes oceanographic model data from multiple models, comparing them to observed data from buoys. The goal is to evaluate the performance of different models across various forecast ranges by generating statistics and visualizations such as scatter plots and Taylor diagrams. Below are the steps to use the code:
+
+# Configuration File (configuration4.json)
+# The script requires a configuration file in JSON format, specifying various settings and paths for the models and data directories. An example configuration file is provided below:
+
+# {
+#   "process_buoys_separately": true,
+#   "calculate_combined_statistics": false,
+#   "models": {
+#     "hr1": "/path/to/hr1/model/data",
+#     "hr2": "/path/to/hr2/model/data",
+#     "multi1": "/path/to/multi1/model/data",
+#     "gfsv16": "/path/to/gfsv16/model/data"
+#   },
+#   "forecast_ranges": [
+#     [3, 24],
+#     [24, 48],
+#     [48, 72],
+#     [72, 96],
+#     [96, 120],
+#     [120, 144],
+#     [144, 168],
+#     [3,168]
+#   ],
+#   "plot_combined_taylor": false,
+#   "directory_path": "/path/to/output/directory"
+# }
+
+# Code Overview
+# Load Configuration: The script reads the configuration file to get the settings for processing data.
+# Get Common Buoy IDs: It identifies the common buoy IDs across all models to ensure consistency in comparison.
+# Process Model Data: For each model and forecast range, the script processes the data to extract and compare significant wave height (HS) and wind speed (wind) between model predictions and observations.
+# Plotting: It generates scatter plots to visualize the comparison between model and observed data. Optionally, it can create combined Taylor diagrams if specified in the configuration.
+# Statistics Calculation: The script calculates various statistical metrics, such as bias, RMSE, and correlation coefficients, and saves these to an Excel file.
+
+# Running the Script
+# Prepare the Configuration File: Ensure the configuration file (configuration4.json) is properly set up with correct paths to the model data directories and desired settings.
+# Execute the Script: Run the script in a Python environment with necessary libraries installed (os, json, xarray, pandas, numpy, matplotlib, pvalstats, mvalstats).
+# View Output: The script will save the generated plots and statistical analysis in the specified output directory.
+
+# Key Functions
+# get_common_buoy_ids: Identifies common buoy IDs across all models.
+# process_model_data: Processes model data for a specified forecast range, generates plots, and calculates statistics.
+# create_combined_taylor_plot: (Optional) Creates Taylor diagrams for combined model comparisons.
+
+# Sample Usage
+# Ensure your Python environment has the necessary dependencies.
+# Place your configuration file (configuration4.json) in the same directory as the script.
+# Run the script:
+python3 your_script_name.py
+# Check the output directory for generated plots and statistical files.
+
+# Author: Ghazal Mohammadpour
+
+"""
 import os
 import json
 import xarray as xr
