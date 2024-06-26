@@ -1,13 +1,4 @@
-There is two formats of compare-all-buoy-sh.py which I only defined it for hr3a,b. I plotted them separetly and used a separate code because it was more easier and organzed for me. 
-
-There is another script which is compare-all-buoy-lo.py I have all other four models. 
-
-User should modify the configuration.json (you can change the name to any names you want just be carefull to change that in the script as well) to icnclude any models that he wants. 
-
-Both codes and a sample configuration (configuration3.py and configuration4.py) files are provided in this github branch. They are the same you only have to modify them to models you want.
-
-
-# Description on How to Use the Code
+# Description on How to Use the compare-all-buoy-sh.py and compare-all-buoy-lo.py Codes
 # This script processes and analyzes oceanographic model data from multiple models, comparing them to observed data from buoys. The goal is to evaluate the performance of different models across various forecast ranges by generating statistics and visualizations such as scatter plots and Taylor diagrams. Below are the steps to use the code:
 
 # Configuration File (configuration4.json)
@@ -59,4 +50,13 @@ Both codes and a sample configuration (configuration3.py and configuration4.py) 
 # Run the script:
 python3 your_script_name.py
 # Check the output directory for generated plots and statistical files.
+
+
+
+
+# Note:
+# - There are two script formats: `compare-all-buoy-sh.py` (defined for hr3a, hr3b) and `compare-all-buoy-lo.py` (for all other four models).
+# - Modify the configuration file to include any models you want.
+# - Both codes and sample configuration files (`configuration3.py` and `configuration4.py`) are provided in the GitHub branch.
+# - The detailed description and instructions can also be found in `compare-all-buoy-sh.py` and `compare-all-buoy-lo.py`.
 
