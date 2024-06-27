@@ -50,7 +50,8 @@ HOW TO USE THE BUOY SCRIPTS AND THE PLOT DATA.
 python3 your_python_script.py "$@"
 Using WaveWatch III tools, this script is modelBuoycollocation.py.
 python3 modelBuoycollocation.py "$@"
-
+There are two submit job script formats shared (script-spec.sh, script-bull.sh) in the hr-eval branch, that user can use the. User should change the pathes or the model names or other variables which are defined in those scripts. For more detailed
+information user can checkout the modelBupycollocation.py code. There is a good instruction at the top of the code which explains more. 
 
 
 # After generating the netCDF file, validate buoy data using statistics and 
@@ -107,5 +108,26 @@ python3 modelBuoycollocation.py "$@"
 # - Run the script:
 python compare-all-buoy-sh.py
 (The code name can be changed by the user if necessary)
+I dont share any script for submitting this script as its a simple format. I just provide a sample here: 
+
+
+
+#!/bin/sh --login
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --time=00:30:00
+#SBATCH --partition=hera
+#SBATCH --account=marine-cpu
+#SBATCH --job-name=process_data
+#SBATCH --output=logfile.out
+
+# Load necessary modules
+module use /scratch1/NCEPDEV/climate/Jessica.Meixner/general/modulefiles-rocky16
+module load ww3tools
+
+python3 compare-all-buoy-sh.py (You may change the name to other names, be carefull to change it here as well when you want to submit the job script)
+
+
+
 # - Check the output directory for generated plots and statistical files.
 
