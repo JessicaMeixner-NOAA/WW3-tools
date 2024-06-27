@@ -48,6 +48,10 @@ HOW TO USE THE BUOY SCRIPTS AND THE PLOT DATA.
 
 # Execute the Python script with the provided arguments
 python3 your_python_script.py "$@"
+Using WaveWatch III tools, this script is modelBuoycollocation.py.
+python3 modelBuoycollocation.py "$@"
+
+
 
 # After generating the netCDF file, validate buoy data using statistics and 
 # plotting with `compare-all-buoy-sh.py`. The output format is:
@@ -101,6 +105,7 @@ python3 your_python_script.py "$@"
 # - Ensure necessary dependencies are installed.
 # - Place configuration file in the same directory as the script.
 # - Run the script:
-python3 your_script_name.py
+python compare-all-buoy-sh.py
+(The code name can be changed by the user if necessary)
 # - Check the output directory for generated plots and statistical files.
 
