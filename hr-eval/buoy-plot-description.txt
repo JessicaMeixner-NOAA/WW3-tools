@@ -53,6 +53,12 @@ python3 modelBuoycollocation.py "$@"
 There are two submit job script formats shared (script-spec.sh, script-bull.sh) in the hr-eval branch, that user can use the. User should change the pathes or the model names or other variables which are defined in those scripts. For more detailed
 information user can checkout the modelBupycollocation.py code. There is a good instruction at the top of the code which explains more. 
 
+You can find a sample for running this code in this path: /scratch2/NCEPDEV/marine/Ghazal.Mohammadpour/Buoyval-multi1/Buoy_branch/WW3-tools/ww3tools
+
+In this path you can find a scripts called jobcard-summer.sh , jobcard-hurricane.sh and jobcard-winter.sh , these scripts are automated format for submitting many jobs at the same time. These codes helps 
+with submitting jobs for each initial condition. One can merge them all. These scripts are same as script-spec.sh, but it can submit all jobs for any intial conditions we define at the same time. The reason 
+for doing this is that, for some models, running modelBuoycollocation.py takes time (more than 8 hours allowance time) and I foud this way more efficient way for submitting the jobs. 
+So, when you submit the job to process many intial conditions, it may break because of the limitted time. But this way garanties for a completing the process at least for the models I have worked with.  
 
 # After generating the netCDF file, validate buoy data using statistics and 
 # plotting with `compare-all-buoy-sh.py`. The output format is:
@@ -131,3 +137,10 @@ python3 compare-all-buoy-sh.py (You may change the name to other names, be caref
 
 # - Check the output directory for generated plots and statistical files.
 
+You have to define the pathes for the modelBuoycollocation.py outpus in the configuration files needed for compare-all-buoy-sh.py and then run the 
+code to make the plots. 
+I shared path if you want to have sample: /scratch2/NCEPDEV/marine/Ghazal.Mohammadpour/Buoyval-multi1/Buoy_branch/WW3-tools/ww3tools
+
+in the above path you can run the code. You have to modify the configuration file to include any models you want. For the buoy validation HR3a,b is 
+not working properly. (Jessica is taking care of that)thats why I only did that for the HR2,HR1,MULTI1,GFSV16, I also did this for HR3a,b separetly,
+ which does not give a good results. 
