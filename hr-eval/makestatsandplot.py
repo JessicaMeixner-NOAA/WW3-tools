@@ -47,8 +47,7 @@ def main():
   allstats_hs_cal=np.zeros([3,4,6,3,16,9])*np.nan
   allstats_wnd_cal=np.zeros([3,4,6,3,16,9])*np.nan
 
-  season=['summer']
-  satelites=['JASON3']
+  season=['winter','summer','hurricane']
 
   for k in range(len(season)):
     if season[k] == "winter":
@@ -56,23 +55,22 @@ def main():
        enddate = dt.datetime(2020,2,26)
        datestride = 3 
        endday = 16
-       model=['multi1', 'GFSv16', 'HR1', 'HR2', 'HR3a', 'HR3b']
+       model=['multi1', 'HR1', 'HR2', 'HR3a', 'HR3b']
     elif season[k] == "summer":
        startdate = dt.datetime(2020,6,1)
        enddate = dt.datetime(2020,8,30)
        datestride = 3
        endday = 16
-       model=['multi1', 'HR1', 'HR2', 'HR3a', 'HR3b']
+       model=['multi1', 'GFSv16','HR1', 'HR2', 'HR3a', 'HR3b']
     elif season[k] == "hurricane":
        startdate = dt.datetime(2020,7,20)
        enddate = dt.datetime(2020,11,20)
        datestride = 1
        endday = 7
-       model=['multi1', 'HR1', 'HR2', 'HR3a', 'HR3b']
+       model=['multi1', 'GFSv16','HR1', 'HR2', 'HR3a', 'HR3b']
 
-    model=['multi1']
     for j in range(len(satelites)): 
-      for m in range(leng(model)): 
+      for m in range(len(model)): 
         time = []; lats = []; lons = []
         fhrs = []; fhrsall = [];
         obs_hs = []; obs_wnd = []
