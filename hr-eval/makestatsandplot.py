@@ -41,6 +41,7 @@ def main():
 
   satelites=['JASON3', 'CRYOSAT2', 'SARAL', 'SENTINEL3A'] #JASON3,JASON2,CRYOSAT2,JASON1,HY2,SARAL,SENTINEL3A,ENVISAT,ERS1,ERS2,GEOSAT,GFO,TOPEX,SENTINEL3B,CFOSAT
 
+  satelites=['JASON3']
   #seasons[k],satelites,model, (all, above 4hs, above 7hs),day, stats:bias, RMSE, NBias, NRMSE, SCrmse, SI, HH, CC, N
   allstats_hs=np.zeros([3,4,6,3,16,9])*np.nan 
   allstats_wnd=np.zeros([3,4,6,3,16,9])*np.nan
