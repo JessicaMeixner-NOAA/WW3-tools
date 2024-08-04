@@ -86,4 +86,9 @@ A previous way of combining scripts was using time-f.py which required the confi
 3- for the statistcal analysis I used the code and called mvalstats.py to calculate the statistcs. (stat.py)It created the spreadsheets with this format ({folder}_stats.csv)
 
 4- plotstat.py, in this code you can plot the outputs of the stat.py. In the code, there is a switch that you can define if you want to consider all the vlues for all the models or the amount that covers all of them. when this value ()
-is False,it plots the full range and when it is true it only plots up to values that is covered by all of the inputs. 
+is False,it plots the full range and when it is true it only plots up to values that is covered by all of the inputs.
+
+
+## Note from Jessica 
+most of the last parts of the creating and making plots is not well documented (yet).  The stats file i used as been moved to: /scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/statshr3.nc
+ 
