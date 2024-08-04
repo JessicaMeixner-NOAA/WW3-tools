@@ -62,7 +62,6 @@ def main():
        orderofplots=[0,5,1,2,3,4]
     xday=np.arange(1, endday+1, 1)*24
     yday=np.arange(0, endday, 1)
-    xticksday=np.arange(1, 16+1, 1)*24
     for j in range(len(satelites)):
      for s in range(len(stats)):
       plot1 = CreatePlot()  # Create  Plot
@@ -83,22 +82,22 @@ def main():
   
 
         # Top (HS) plot
-        lp = LinePlot(xday, allstats_hs[k,j,m,0,yday,s])  # Create line plot object
+        lp = LinePlot(xday, allstats_hs_cal[k,j,m,0,yday,s])  # Create line plot object
         lp.color = colorsformodel[m]   # line color
         lp.linestyle = "-"  # line style
         lp.linewidth = 1.5  # line width
-        lp.marker = "o"  # marker type
-        lp.markersize = 4  # markersize
+        #lp.marker = "o"  # marker type
+        #lp.markersize = 4  # markersize
         lp.alpha = None  # transparency
         lp.label = model[m]  # give it a label
         plt_list.append(lp)  # Add line plot object to list
 
-        lp = LinePlot(xday, allstats_hs[k,j,m,1,yday,s])  # Create line plot object
+        lp = LinePlot(xday, allstats_hs_cal[k,j,m,1,yday,s])  # Create line plot object
         lp.color = colorsformodel[m]   # line color
         lp.linestyle = "--"  # line style
         lp.linewidth = 1.5  # line width
-        lp.marker = "o"  # marker type
-        lp.markersize = 4  # markersize
+        #lp.marker = "o"  # marker type
+        #lp.markersize = 4  # markersize
         lp.alpha = None  # transparency
         #lp.label = "line2"  # give it a label
         plt_list.append(lp)  # Add line plot object to list
@@ -119,21 +118,21 @@ def main():
         lp.color = colorsformodel[m]  # line color
         lp.linestyle = "-"  # line style
         lp.linewidth = 1.5  # line width
-        lp.marker = "o"  # marker type
-        lp.markersize = 4  # markersize
+        #lp.marker = "o"  # marker type
+        #lp.markersize = 4  # markersize
         lp.alpha = None  # transparency
         lp.label = model[m]  # give it a label
         plt_list2.append(lp)  # Add line plot object to list
 
-        #lp = LinePlot(xday, allstats_wnd[k,j,m,1,yday,s])  # Create line plot object
-        #lp.color = colorsformodel[m]  # line color
-        #lp.linestyle = "--"  # line style
-        #lp.linewidth = 1.5  # line width
-        ##lp.marker = "o"  # marker type
-        ##lp.markersize = 4  # markersize
-        #lp.alpha = None  # transparency
-        #lp.label = model[m]  # give it a label
-        #plt_list2.append(lp)  # Add line plot object to list
+        lp = LinePlot(xday, allstats_wnd_cal[k,j,m,1,yday,s])  # Create line plot object
+        lp.color = colorsformodel[m]  # line color
+        lp.linestyle = "--"  # line style
+        lp.linewidth = 1.5  # line width
+        #lp.marker = "o"  # marker type
+        #lp.markersize = 4  # markersize
+        lp.alpha = None  # transparency
+        lp.label = model[m]  # give it a label
+        plt_list2.append(lp)  # Add line plot object to list
 
 
       plot1.plot_layers = plt_list  # draw plot1 (the top plot)
@@ -144,53 +143,35 @@ def main():
       plot1.add_xlabel(xlabel="Forecast Hour")
       plot1.add_ylabel(ylabel=stats[s])
       plot1.add_grid()
-      plot1.set_xticks(xticksday)
-      plot1.set_xlim(0,384) #endday*24)
-      #stats=['bias', 'RMSE','NBias', 'NRMSE', 'SCrmse', 'SI', 'HH','CC', 'N']
-      #         0        1     2        3        4        5     6    7    8
-      if s == 0:
-        plot1.set_ylim(-1.75,1.75)
-      elif s == 1: 
-        plot1.set_ylim(0,3)
-      elif s==7:
-        plot1.set_ylim(0,1)
+      plot1.set_xticks(xday)
       #plot1.set_xticklabels([str(item) for item in x1], rotation=0)
       #yticks = np.arange(np.min(y2), np.max(y2) + 1, 1)
       #plot1.set_yticks(yticks)
       #plot1.set_yticklabels([str(item) for item in yticks], rotation=0)
-      #plot1.add_legend(loc="upper left", fancybox=True, framealpha=0.80)
-      ##plot1.add_legend(loc="upper left", fancybox=True, framealpha=1)
+      plot1.add_legend(loc="upper left", fancybox=True, framealpha=0.80)
+
       # Add plot features
       plot2.add_title(label="Wind Speed")
       plot2.add_xlabel(xlabel="Forecast Hour")
       plot2.add_ylabel(ylabel=stats[s])
       plot2.add_grid()
-      plot2.set_xticks(xticksday)#xday)
-      plot2.set_xlim(0,384)
-      if s == 0:
-        plot2.set_ylim(-1,0)
-      elif s == 1:
-        plot2.set_ylim(0,5)
-      elif s==7:
-        plot2.set_ylim(0,1)
+      plot2.set_xticks(xday)
       #plot2.set_xticklabels([str(item) for item in x2], rotation=0)
       #yticks = np.arange(np.min(y2), np.max(y2) + 1, 1)
       #plot2.set_yticks(yticks)
       #plot2.set_yticklabels([str(item) for item in yticks], rotation=0)
       #plot2.add_legend(loc="upper left", fancybox=True, framealpha=0.80)
-      #plot2.add_legend(loc="upper left", fancybox=True, framealpha=1)
-
 
       # Return matplotlib figure
       fig = CreateFigure(nrows=2, ncols=1, figsize=(8, 6))
       fig.plot_list = [plot1, plot2]
       fig.create_figure()
-      supertitle=f"fig_{stats[s]}_{satelites[j]}_{season[k]}"
+      supertitle=f"calfig_{stats[s]}_{satelites[j]}_{season[k]}"
       fig.add_suptitle(supertitle)
       fig.tight_layout()
       #plotpath = outpath+'/scatter'+'%03d.png' % (ihr)
       #fig.save_figure(plotpath)
-      plotpath=f"fig_{stats[s]}_{satelites[j]}_{season[k]}.png"
+      plotpath=f"calfig_{stats[s]}_{satelites[j]}_{season[k]}.png"
       fig.save_figure(plotpath)
 
       fig.close_figure()
