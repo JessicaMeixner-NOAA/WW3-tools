@@ -1,80 +1,121 @@
 #!/bin/bash
 
-# wfetchsatellite_AODN_Altimeter.sh
+# wfetchsatellite_AODN_Altimeter_parallel.sh
+# Optimized & parallelized version of wfetchsatellite_AODN_Altimeter.sh
+# - Builds a list of missing files and downloads them in parallel (xargs or GNU parallel)
+# - Avoids repeated filesystem checks inside tight loops
+# - Uses wget with resume and limited retries
+# - Cleans up partial empty files at the end
 #
-# VERSION AND LAST UPDATE:
-# v1.0  04/04/2022
-# v1.1  07/11/2022
+# Usage:
+#  bash wfetchsatellite_AODN_Altimeter_parallel.sh SATELLITE DEST_DIR HEMI [CONCURRENCY]
+#  example: bash wfetchsatellite_AODN_Altimeter_parallel.sh CRYOSAT-2 /data/AODN_altm S 8
 #
-# PURPOSE:
-#  Script to download AODN altimeter data. See the available files at  
-#  http://thredds.aodn.org.au/thredds/catalog/IMOS/SRS/Surface-Waves/Wave-Wind-Altimetry-DM00/catalog.html
-#  Altimeters:
-#  JASON-3,JASON-2,JASON-1,SENTINEL-3A,SENTINEL-3B,SENTINEL-6A,HY-2,HY-2B,CFOSAT,SARAL,ERS-1,ERS-2,CRYOSAT-2,ENVISAT,GEOSAT,TOPEX,GFO
-#  Satellite data from Integrated Marine Observing System (IMOS), Australian Ocean Data Network (AODN)
-#  https://portal.aodn.org.au/
-#  Altimeter
-#  https://doi.org/10.1038/s41597-019-0083-9
-#  Scatterometer
-#  https://doi.org/10.1175/JTECH-D-19-0119.1
+# Notes:
+#  - Requires: wget, xargs (most systems) or GNU parallel if you prefer to use it
+#  - Default concurrency = 8 (tweak for your network / server limits)
+#  - The script preserves the original filename saved by the AODN server
+#  - After run it will produce listDownloaded_<SAT>.txt and listFailed_<SAT>.txt in the destination dir
 #
-# USAGE:
-#  Three arguments are read:
-#   (1) altimeter name (exact names, see above)
-#   (2) destination path
-#   (3) Hemisphere, N or S
-#  So if you want to download the whole database, you have to run
-#   this code for each satellite and hemisphere.
-#  Examples (from linux/terminal command line):
-#   nohup bash wfetchsatellite_AODN_Altimeter.sh CRYOSAT-2 /media/data/observations/satellite/altimeter/AODN_altm/CRYOSAT2 S >> nohup_CRYOSAT2_HS.out 2>&1 &
-#
-# when updating the database, consider: rsync --size-only --update source target
-#
-# OUTPUT:
-#  multiple AODN satellite data (netcdf format) saved in the given directory.
-#
-# DEPENDENCIES:
-#  wget
-#
-# AUTHOR and DATE:
-#  04/04/2022: Ricardo M. Campos, first version.
-#  07/11/2022: Ricardo M. Campos, correct lat2 format for the Southern H.
-#  01/25/2023: Ricardo M. Campos, get_AODN_AltData.sh renamed to wfetchsatellite_AODN_Altimeter.sh
-#
-# PERSON OF CONTACT:
-#  Ricardo M Campos: ricardo.campos@noaa.gov
-#
+# Author: Adapted from Ricardo M. Campos script
+# Date: 2025-10-22
 
-fname=http://thredds.aodn.org.au/thredds/fileServer/IMOS/SRS/Surface-Waves/Wave-Wind-Altimetry-DM00
+set -eu -o pipefail
+
+BASE_URL="http://thredds.aodn.org.au/thredds/fileServer/IMOS/SRS/Surface-Waves/Wave-Wind-Altimetry-DM00"
+
+if [ "$#" -lt 3 ]; then
+  echo "Usage: $0 SATELLITE DEST_DIR HEMI [CONCURRENCY]"
+  echo "Example: $0 CRYOSAT-2 /data/AODN_altm S 8"
+  exit 2
+fi
+
+s="$1"
 DIR="$2"
+h="$3"
+CONC="${4:-8}"   # parallel jobs
 
-s="$1"; h="$3"
-for lon in `seq -f "%03g" 0 20 340`; do
-  for lat in `seq -f "%03g" 0 20 80`; do
-    for adlat in `seq -f "%03g" 0 20`; do
-      if [[ "$h" == "N" ]];then
-        lat2=(`expr $lat + $adlat`)
+mkdir -p "$DIR"
+
+TMP_LIST="$(mktemp)"
+trap 'rm -f "$TMP_LIST"' EXIT
+
+# build list of URLs to download (only if local file missing)
+for lon in $(seq -f "%03g" 0 20 340); do
+  for lat in $(seq -f "%03g" 0 20 80); do
+    for adlat in $(seq -f "%03g" 0 20); do
+      lat_dec=$((10#$lat))
+      adlat_dec=$((10#$adlat))
+      if [[ "$h" == "N" ]]; then
+        lat2_dec=$((lat_dec + adlat_dec))
       else
-        lat2=(`expr $lat - $adlat`)
+        lat2_dec=$((lat_dec - adlat_dec))
       fi
-      for adlon in `seq -f "%03g" 0 19`; do
-        lon2=(`expr $lon + $adlon`)
-        test -f $DIR/IMOS_SRS-Surface-Waves_MW_${s}_FV02_"$(printf "%03d" ${lat2/#-})"${h}-"$(printf "%03d" $lon2)"E-DM00.nc
-        TE=$?
-        if [ "$TE" -eq 1 ]; then
-          wget -l1 -H -nd -N -np -erobots=off --tries=3 $fname/${s}/${lat}${h}_${lon}E/IMOS_SRS-Surface-Waves_MW_${s}_FV02_"$(printf "%03d" ${lat2/#-})"${h}-"$(printf "%03d" $lon2)"E-DM00.nc -O $DIR/IMOS_SRS-Surface-Waves_MW_${s}_FV02_"$(printf "%03d" ${lat2/#-})"${h}-"$(printf "%03d" $lon2)"E-DM00.nc
-          wait $!
-          sleep 1
-          echo IMOS_SRS-Surface-Waves_MW_${s}_FV02_"$(printf "%03d" ${lat2/#-})"${h}-"$(printf "%03d" $lon2)"E-DM00.nc >> listDownloaded_${s}.txt
-          find $DIR -empty -type f -delete
+      if [ "$lat2_dec" -lt 0 ]; then
+        lat2_abs=$(( -1 * lat2_dec ))
+      else
+        lat2_abs=$lat2_dec
+      fi
+
+      for adlon in $(seq -f "%03g" 0 19); do
+        lon_dec=$((10#$lon))
+        adlon_dec=$((10#$adlon))
+        lon2_dec=$((lon_dec + adlon_dec))
+        lat_field=$(printf "%03d" "$lat2_abs")
+        lon_field=$(printf "%03d" "$lon2_dec")
+        remote_dir="${lat}${h}_${lon}E"
+        filename="IMOS_SRS-Surface-Waves_MW_${s}_FV02_${lat_field}${h}-${lon_field}E-DM00.nc"
+        url="${BASE_URL}/${s}/${remote_dir}/${filename}"
+        target="${DIR}/${filename}"
+
+        if [ ! -f "$target" ]; then
+          echo "$url" >> "$TMP_LIST"
         fi
       done
     done
   done
 done
-echo " " >> listDownloaded_${s}.txt
-echo " OK, "${s}"   " >> listDownloaded_${s}.txt
-echo " " >> listDownloaded_${s}.txt
 
-find $DIR -empty -type f -delete
+num_to_get=0
+if [ -f "$TMP_LIST" ]; then
+  num_to_get=$(wc -l < "$TMP_LIST" | tr -d ' ')
+fi
+
+if [ "$num_to_get" -eq 0 ]; then
+  echo "No missing files for satellite ${s} in ${DIR}"
+  exit 0
+fi
+
+echo "Will download ${num_to_get} files with concurrency=${CONC}..."
+
+export DIR s
+
+download_worker() {
+  local url="$1"
+  local filename="${url##*/}"
+
+  if wget -c -q --timeout=30 --tries=3 -P "$DIR" "$url"; then
+    echo "$filename" >> "${DIR}/listDownloaded_${s}.txt"
+  else
+    echo "$filename" >> "${DIR}/listFailed_${s}.txt"
+  fi
+}
+
+export -f download_worker
+
+if command -v xargs >/dev/null 2>&1; then
+  gxargs -a "$TMP_LIST" -n1 -P "$CONC" -I{} bash -c 'download_worker "$@"' _ {}
+else
+  while IFS= read -r url; do
+    download_worker "$url"
+  done < "$TMP_LIST"
+fi
+
+# cleanup empty files (possibly left by interrupted downloads)
+find "$DIR" -empty -type f -delete
+
+echo ""
+echo "Done. Downloaded list: ${DIR}/listDownloaded_${s}.txt"
+echo "Failed list: ${DIR}/listFailed_${s}.txt (if any)"
+exit 0
 
