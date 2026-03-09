@@ -25,10 +25,9 @@ def main():
 
   #model = MyArgs.model
   #OUTDIR = MyArgs.outdir
-  OUTDIR = f"/scratch1/NCEPDEV/climate/Jessica.Meixner/uifcwhreval/WW3-tools/hr-eval/temp" 
-
+  OUTDIR = f"/work/noaa/marine/jmeixner/expimpsat"
   #Check output directory exists: 
-  INPUTDIR=f"/work2/noaa/marine/jmeixner/processsatdata/combineout"
+  INPUTDIR=f"/work/noaa/marine/jmeixner/expimpsat/combinestreamout"
   if not os.path.isdir(INPUTDIR):
     INPUTDIR=f"/scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/combineout"
     if not os.path.isdir(INPUTDIR):
@@ -43,13 +42,14 @@ def main():
 
   satelites=['JASON3']
   #seasons[k],satelites,model, (all, above 4hs, above 7hs),day, stats:bias, RMSE, NBias, NRMSE, SCrmse, SI, HH, CC, N
-  allstats_hs=np.zeros([3,4,6,3,16,9])*np.nan 
-  allstats_wnd=np.zeros([3,4,6,3,16,9])*np.nan
-  allstats_hs_cal=np.zeros([3,4,6,3,16,9])*np.nan
-  allstats_wnd_cal=np.zeros([3,4,6,3,16,9])*np.nan
+  allstats_hs=np.zeros([4,1,2,3,16,9])*np.nan 
+  allstats_wnd=np.zeros([4,1,2,3,16,9])*np.nan
+  allstats_hs_cal=np.zeros([4,1,2,3,16,9])*np.nan
+  allstats_wnd_cal=np.zeros([4,1,2,3,16,9])*np.nan
 
   season=['winter','summer','hurricane']
-
+  season=['stream1a','stream1b','stream2', 'stream3']
+  model=['GFSv16', 'retrov17_01']
   for k in range(len(season)):
     if season[k] == "winter":
        startdate = dt.datetime(2019,12,3)
@@ -69,7 +69,7 @@ def main():
        datestride = 1
        endday = 7
        model=['multi1', 'GFSv16','HR1', 'HR2', 'HR3a', 'HR3b']
-
+    endday=16
     for j in range(len(satelites)): 
       for m in range(len(model)): 
         time = []; lats = []; lons = []

@@ -28,7 +28,7 @@ def main():
   OUTDIR = f"/scratch1/NCEPDEV/climate/Jessica.Meixner/uifcwhreval/WW3-tools/hr-eval/temp" 
   OUTDIR = f"/work/noaa/marine/jmeixner/expimpsat"
   #Check output directory exists: 
-  INPUTDIR=f"/work/noaa/marine/jmeixner/expimpsat/combinestreamout"
+  INPUTDIR=f"/work/noaa/marine/jmeixner/expimpsat/impexpout"
   #Check output directory exists: 
   if not os.path.isdir(INPUTDIR):
     INPUTDIR=f"/scratch1/NCEPDEV/climate/Jessica.Meixner/processsatdata/combineout"
@@ -43,13 +43,16 @@ def main():
   satelites=['JASON3'] #JASON3,JASON2,CRYOSAT2,JASON1,HY2,SARAL,SENTINEL3A,ENVISAT,ERS1,ERS2,GEOSAT,GFO,TOPEX,SENTINEL3B,CFOSAT
 
   #seasons[k],satelites,model, (all, above 4hs, above 7hs),day, stats:bias, RMSE, NBias, NRMSE, SCrmse, SI, HH, CC, N
-  allstats_hs=np.zeros([4,1,2,3,16,9])*np.nan 
-  allstats_wnd=np.zeros([4,1,2,3,16,9])*np.nan
-  allstats_hs_cal=np.zeros([4,1,2,3,16,9])*np.nan
-  allstats_wnd_cal=np.zeros([4,1,2,3,16,9])*np.nan
-
-  season=['stream1a','stream1b','stream2', 'stream3']
+  allstats_hs=np.zeros([12,1,5,3,1,9])*np.nan 
+  allstats_wnd=np.zeros([12,1,5,3,1,9])*np.nan
+  allstats_hs_cal=np.zeros([12,1,5,3,1,9])*np.nan
+  allstats_wnd_cal=np.zeros([12,1,5,3,1,9])*np.nan
+  season=['202208', '202209', '202210', '202401', '202402', '202403', '202404', '202405', '202406', '202407', '202408', '202409', '202410', '202411', '202412']
+  season=['202401', '202402', '202403', '202404', '202405', '202406', '202407', '202408', '202409', '202410', '202411', '202412']
+  season=['202403', '202404', '202405', '202406', '202407', '202408', '202409', '202410', '202411', '202412']
+  #season=['stream1a','stream1b','stream2', 'stream3']
   model=['GFSv16', 'retrov17_01'] 
+  model=['exp','imp1800', 'imp900', 'imp600', 'imp450'] 
   for k in range(len(season)):
     if season[k] == "winter":
        startdate = dt.datetime(2019,12,3)
@@ -69,7 +72,7 @@ def main():
        datestride = 1
        endday = 7
        model=['multi1', 'HR1', 'HR2', 'HR3a', 'HR3b', 'GFSv16']
-    endday = 16
+    endday = 1
     for j in range(len(satelites)): 
       for m in range(len(model)): 
         time = []; lats = []; lons = []
@@ -78,8 +81,7 @@ def main():
         model_hs = []; model_wnd = []
         obs_hs_cal = []; obs_wnd_cal = []
 
-        INPUT_FILE=f"combined_{model[m]}_{season[k]}_{satelites[j]}.nc"
-
+        INPUT_FILE=f"{model[m]}_global.0p25_{season[k]}_{satelites[j]}.nc"
         datapath = INPUTDIR + "/" + INPUT_FILE
         datanc  = nc.Dataset(datapath)
                
@@ -102,7 +104,7 @@ def main():
 
         while day <= endday2:
           f0 = day0*24
-          f1 = day*24
+          f1 = 40*day*24
           indx=np.where(( fhrs <= f1 ) & ( fhrs > f0 ))
 
           #seasons[k],satelites,model, (all, above 4hs, above 7hs), stats:bias, RMSE, NBias, NRMSE, SCrmse, SI, HH, CC, N
@@ -135,14 +137,13 @@ def main():
 
 
 
-
   #seasons[k],satelites,model, (all, above 4hs, above 7hs),day, stats:bias, RMSE, NBias, NRMSE, SCrmse, SI, HH, CC, N
-  ncout = nc.Dataset('myfile.nc','w','NETCDF4'); # using netCDF3 for output format
-  ncout.createDimension('season',4);
+  ncout = nc.Dataset('myimpexpfile.nc','w','NETCDF4'); # using netCDF3 for output format
+  ncout.createDimension('season',12);
   ncout.createDimension('sat',1);
-  ncout.createDimension('model',2);
+  ncout.createDimension('model',5);
   ncout.createDimension('maxhsval',3);
-  ncout.createDimension('days',16);
+  ncout.createDimension('days',1);
   ncout.createDimension('stats',9);
   myvar1 = ncout.createVariable('allstats_hs','float32',('season','sat','model','maxhsval','days','stats'))
   myvar1[:] = allstats_hs;
@@ -153,7 +154,6 @@ def main():
   myvar4 = ncout.createVariable('allstats_wnd_cal','float32',('season','sat','model','maxhsval','days','stats'))
   myvar4[:] = allstats_wnd_cal;
   ncout.close();
-
 
 
 if __name__ == '__main__':

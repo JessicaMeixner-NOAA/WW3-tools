@@ -21,7 +21,7 @@ def main():
 
 
   datapath = "/scratch1/NCEPDEV/climate/Jessica.Meixner/uifcwhreval/WW3-tools/hr-eval/statshr3.nc"
-  datapath = "/work/noaa/marine/jmeixner/expimpsat/ww3-tools/hr-eval/stats20260202.nc" 
+  datapath = "/work/noaa/marine/jmeixner/expimpsat/ww3-tools/hr-eval/myimpexpfile.nc" 
 
   datanc  = nc.Dataset(datapath)
 
@@ -37,14 +37,20 @@ def main():
 
   season=['winter','summer','hurricane']
   satelites=['JASON3'] #, 'CRYOSAT2', 'SARAL', 'SENTINEL3A'] #JASON3,JASON2,CRYOSAT2,JASON1,HY2,SARAL,SENTINEL3A,ENVISAT,ERS1,ERS2,GEOSAT,GFO,TOPEX,SENTINEL3B,CFOSAT
-  colorsformodel=['darkred','blue','darkgreen','darkorange','deeppink','purple']
-  colorsformodel=['black','red']
+  colorsformodel=['red','blue','darkgreen','blue','blue','purple']
+  #colorsformodel=['black','red']
   season=['stream1a','stream1b','stream2', 'stream3']
   model=['GFSv16', 'retrov17_01']
+  season=['202403', '202404', '202405', '202406', '202407', '202408', '202409', '202410', '202411', '202412']
+  #season=['stream1a','stream1b','stream2', 'stream3']
+  model=['GFSv16', 'retrov17_01']
+  model=['exp','imp1800', 'imp900', 'imp600', 'imp450']
   stats=['bias', 'RMSE','NBias', 'NRMSE', 'SCrmse', 'SI', 'HH','CC', 'N']
-  for k in range(len(season)):
+  #for k in range(len(season)):
+  for k in range(len(satelites)):
     endday = 16
-    orderofplots=[0,1]
+    orderofplots=[0,2,3,4]
+    orderofplots=[0,3]
     if season[k] == "winter":
        startdate = dt.datetime(2019,12,3)
        enddate = dt.datetime(2020,2,26)
@@ -66,9 +72,9 @@ def main():
        endday = 7
        model=['multi1', 'HR1', 'HR2', 'HR3a', 'HR3b', 'GFSv16']
        orderofplots=[0,5,1,2,3,4]
-    xday=np.arange(1, endday+1, 1)*24
-    yday=np.arange(0, endday, 1)
-    xticksday=np.arange(1, 16+1, 1)*24
+    xday=np.arange(3,12, 1)
+    yday=np.arange(0,9, 1)
+    #xticksday=np.arange(1, 16+1, 1)*24
     for j in range(len(satelites)):
      for s in range(len(stats)):
       plot1 = CreatePlot()  # Create  Plot
@@ -79,17 +85,17 @@ def main():
       plt_list2 = []  # initialize empty plot list
 
 
-      for mm in range(len(model)):
+      for mm in range(len(orderofplots)):
         m=orderofplots[mm]
-        print(season[k])
+        print(season[:])
         print(model[m])
         #seasons[k],satelites,model, (all, above 4hs, above 7hs),day, stats:bias, RMSE, NBias, NRMSE, SCrmse, SI, HH, CC, N
         print(satelites[j]) 
-        print(allstats_hs[k,j,m,0,:,1]) 
+        print(allstats_hs[:,j,m,0,0,1]) 
   
 
         # Top (HS) plot
-        lp = LinePlot(xday, allstats_hs[k,j,m,0,yday,s])  # Create line plot object
+        lp = LinePlot(xday, allstats_hs[yday,j,m,0,0,s])  # Create line plot object
         lp.color = colorsformodel[m]   # line color
         lp.linestyle = "-"  # line style
         lp.linewidth = 1.5  # line width
@@ -99,14 +105,15 @@ def main():
         lp.label = model[m]  # give it a label
         plt_list.append(lp)  # Add line plot object to list
 
-        lp = LinePlot(xday, allstats_hs[k,j,m,1,yday,s])  # Create line plot object
+         ### above 4m
+        lp = LinePlot(xday, allstats_hs[yday,j,m,1,0,s])  # Create line plot object
         lp.color = colorsformodel[m]   # line color
         lp.linestyle = "--"  # line style
         lp.linewidth = 1.5  # line width
         lp.marker = "o"  # marker type
         lp.markersize = 4  # markersize
         lp.alpha = None  # transparency
-        #lp.label = "line2"  # give it a label
+        ####lp.label = "line2"  # give it a label
         plt_list.append(lp)  # Add line plot object to list
 
         #lp = LinePlot(xday, allstats_hs[k,j,m,2,yday,s])  # Create line plot object
@@ -121,7 +128,7 @@ def main():
 
 
         # Bottom plot
-        lp = LinePlot(xday, allstats_wnd_cal[k,j,m,0,yday,s])  # Create line plot object
+        lp = LinePlot(xday, allstats_wnd_cal[yday,j,m,0,0,s])  # Create line plot object
         lp.color = colorsformodel[m]  # line color
         lp.linestyle = "-"  # line style
         lp.linewidth = 1.5  # line width
@@ -147,7 +154,7 @@ def main():
 
       # Add plot features
       plot1.add_title(label="Significant Wave Height")
-      plot1.add_xlabel(xlabel="Forecast Hour")
+      plot1.add_xlabel(xlabel="Month in 2024")
       plot1.add_ylabel(ylabel=stats[s])
       plot1.add_grid()
       ###plot1.set_xticks(xticksday)
@@ -184,7 +191,7 @@ def main():
       #plot2.set_yticks(yticks)
       #plot2.set_yticklabels([str(item) for item in yticks], rotation=0)
       #plot2.add_legend(loc="upper left", fancybox=True, framealpha=0.80)
-      #plot2.add_legend(loc="upper left", fancybox=True, framealpha=1)
+      plot2.add_legend(loc="upper left", fancybox=True, framealpha=1)
 
 
       # Return matplotlib figure
