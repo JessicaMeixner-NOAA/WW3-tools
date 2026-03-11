@@ -136,24 +136,69 @@ def extract_reference_times_grib(files):
 
     for file in files:
         ds = cfgrib.open_datasets(file, backend_kwargs={'indexpath': ''})
-        ws = ds[1]['ws'] if 'ws' in ds[1] else xr.full_like(ds[1]['latitude'], np.nan, dtype=np.float32)
-        swh = ds[1]['swh'] if 'swh' in ds[1] else xr.full_like(ds[1]['latitude'], np.nan, dtype=np.float32)
-        valid_time_unix = (ds[1].valid_time.values - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's')
-
-        valid_times_unix.append(valid_time_unix.item())  # Append valid time
+        
+        # Debug: print how many datasets were found
+        print(f"File: {file} - Found {len(ds)} dataset(s)")
+        
+        if not ds:
+            print(f"Warning: No datasets found in {file}")
+            continue
+        
+        # Search for ws and swh across all datasets
+        ws = None
+        swh = None
+        valid_time_ds = None
+        latitude_ds = None
+        longitude_ds = None
+        
+        for d in ds:
+            if ws is None and 'ws' in d.variables:
+                ws = d['ws']
+                if valid_time_ds is None:
+                    valid_time_ds = d
+            
+            if swh is None and 'swh' in d.variables:
+                swh = d['swh']
+                if valid_time_ds is None:
+                    valid_time_ds = d
+            
+            if latitude_ds is None and 'latitude' in d.variables:
+                latitude_ds = d
+            
+            if longitude_ds is None and 'longitude' in d.variables:
+                longitude_ds = d
+        
+        # Use first dataset as fallback for time and coordinates
+        if valid_time_ds is None:
+            valid_time_ds = ds[0]
+        if latitude_ds is None:
+            latitude_ds = ds[0]
+        if longitude_ds is None:
+            longitude_ds = ds[0]
+        
+        # Create NaN-filled arrays if variables not found
+        if ws is None:
+            ws = xr.full_like(latitude_ds['latitude'], np.nan, dtype=np.float32)
+        if swh is None:
+            swh = xr.full_like(latitude_ds['latitude'], np.nan, dtype=np.float32)
+        
+        # Extract valid time
+        valid_time_unix = (valid_time_ds.valid_time.values - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's')
+        valid_times_unix.append(valid_time_unix.item())
 
         data = xr.Dataset({
             'wind_speed': ws,
             'significant_wave_height': swh,
-            'longitude': ds[1]['longitude'],
-            'latitude': ds[1]['latitude'],
-            'time': ds[1]['time'],
-            'step': ds[1]['step']
+            'longitude': longitude_ds['longitude'],
+            'latitude': latitude_ds['latitude'],
+            'time': valid_time_ds['time'],
+            'step': valid_time_ds['step'] if 'step' in valid_time_ds else xr.DataArray(0)
         })
 
         model_data_list.append(data)
 
     return model_data_list, np.array(valid_times_unix)
+
 
 def interpolate_grib2(data_directory, data_pattern, satellite_file, output_file, model_name):
     found_files = glob.glob(os.path.join(data_directory, data_pattern))
